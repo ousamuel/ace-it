@@ -27,12 +27,25 @@ export default function Signup({ searchParams }: { searchParams: Message }) {
         </p>
         <div className="flex flex-col gap-2 [&>input]:mb-3 mt-8">
           <Label htmlFor="email">Email</Label>
-          <Input name="email" placeholder="you@example.com" required />
+          <Input
+            name="email"
+            type="email"
+            placeholder="you@example.com"
+            required
+          />
           <Label htmlFor="password">Password</Label>
           <Input
             type="password"
             name="password"
             placeholder="Your password"
+            minLength={6}
+            required
+          />
+          <Label htmlFor="confirmPassword">Confirm Password</Label>
+          <Input
+            type="password"
+            name="confirmPassword"
+            placeholder="Confirm your password"
             minLength={6}
             required
           />
@@ -42,7 +55,7 @@ export default function Signup({ searchParams }: { searchParams: Message }) {
           <FormMessage message={searchParams} />
         </div>
       </form>
-      <SmtpMessage />
+      {/* <SmtpMessage /> */}
     </>
   );
 }

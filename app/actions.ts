@@ -8,12 +8,17 @@ import { redirect } from "next/navigation";
 export const signUpAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString();
   const password = formData.get("password")?.toString();
+  const confirmPassword = formData.get("confirmPassword")?.toString();
   const supabase = createClient();
   const origin = headers().get("origin");
 
   if (!email || !password) {
     return { error: "Email and password are required" };
   }
+  if (confirmPassword != password) {
+    return encodedRedirect("error", "/sign-up", "Passwords are not matching");
+  }
+  // added custom password confirmation to ensure no typos
 
   const { error } = await supabase.auth.signUp({
     email,
@@ -27,11 +32,18 @@ export const signUpAction = async (formData: FormData) => {
     console.error(error.code + " " + error.message);
     return encodedRedirect("error", "/sign-up", error.message);
   } else {
-    return encodedRedirect(
-      "success",
-      "/sign-up",
-      "Thanks for signing up! Please check your email for a verification link.",
-    );
+    // return encodedRedirect(
+    //   "success",
+    //   "/sign-up",
+    //   "Thanks for signing up! Please check your email for a verification link.",
+    // );
+
+    // return redirect("/protected");
+    // changed this line to redirect b/c no need for verification
+    // too hassling to do email verification b/c supabase only allows for 4 every hour
+    // if app were to scale large enough + paid service, then I can add custom aws SMTP and renable email verification for safety
+    return redirect("/waitlist");
+    // change back to /protected once site is actually ready and no more waitlist
   }
 };
 
@@ -49,7 +61,9 @@ export const signInAction = async (formData: FormData) => {
     return encodedRedirect("error", "/sign-in", error.message);
   }
 
-  return redirect("/protected");
+  // return redirect("/protected");
+  return redirect("/waitlist");
+  // change back to /protected once site is actually ready and no more waitlist
 };
 
 export const forgotPasswordAction = async (formData: FormData) => {
@@ -71,7 +85,7 @@ export const forgotPasswordAction = async (formData: FormData) => {
     return encodedRedirect(
       "error",
       "/forgot-password",
-      "Could not reset password",
+      "Could not reset password"
     );
   }
 
@@ -82,7 +96,7 @@ export const forgotPasswordAction = async (formData: FormData) => {
   return encodedRedirect(
     "success",
     "/forgot-password",
-    "Check your email for a link to reset your password.",
+    "Check your email for a link to reset your password."
   );
 };
 
@@ -96,7 +110,7 @@ export const resetPasswordAction = async (formData: FormData) => {
     encodedRedirect(
       "error",
       "/protected/reset-password",
-      "Password and confirm password are required",
+      "Password and confirm password are required"
     );
   }
 
@@ -104,7 +118,7 @@ export const resetPasswordAction = async (formData: FormData) => {
     encodedRedirect(
       "error",
       "/protected/reset-password",
-      "Passwords do not match",
+      "Passwords do not match"
     );
   }
 
@@ -116,7 +130,7 @@ export const resetPasswordAction = async (formData: FormData) => {
     encodedRedirect(
       "error",
       "/protected/reset-password",
-      "Password update failed",
+      "Password update failed"
     );
   }
 
