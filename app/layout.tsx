@@ -39,8 +39,8 @@ export default function RootLayout({
                 <div className="w-full max-w-5xl flex justify-between items-center p-3 px-5 text-3xl">
                   <div className="flex gap-5 items-center font-semibold">
                     <div className="flex flex-row gap-1">
-                      <h1>ACE</h1>
-                      <h1 className="text-green-500">IT</h1>
+                      <h1><a href="/">ACE</a></h1>
+                      <h1 className="text-green-500"><a href="/">IT</a></h1>
                     </div>
                   </div>
                   {!hasEnvVars ? <EnvVarWarning /> : <HeaderAuth />}
