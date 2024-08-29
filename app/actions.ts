@@ -1,9 +1,64 @@
+// actions.ts
 "use server";
 
 import { encodedRedirect } from "@/utils/utils";
 import { createClient } from "@/utils/supabase/server";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+
+export const addFlashcards = async (formData: FormData) => {
+  const supabase = createClient();
+  const question = formData.get("question")?.toString();
+  const answer = formData.get("answer")?.toString();
+  const notes = formData.get("notes")?.toString();
+
+  if (!notes) {
+    return { error: "Notes are required to generate flashcards" };
+  }
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return encodedRedirect(
+      "error",
+      "/sign-in",
+      "You must be logged in to add flashcards"
+    );
+  }
+
+  // Call the AI API to generate flashcards
+  const response = await fetch(`/api/generate`, {
+    method: "POST",
+    body: notes,
+  });
+
+  if (!response.ok) {
+    return { error: "Failed to generate flashcards" };
+  }
+
+  const flashcards = await response.json();
+
+  // Save flashcards to Supabase
+  const { error } = await supabase.from("flashcards").insert(
+    flashcards.map((card: any) => ({
+      question: card.front,
+      answer: card.back,
+      user_uid: user.id,
+    }))
+  );
+
+  if (error) {
+    return encodedRedirect("error", "/flashcards", error.message);
+  }
+
+  return encodedRedirect(
+    "success",
+    "/flashcards/generate",
+    "Flashcards generated and saved successfully!"
+  );
+};
 
 export const addSuggestionAction = async (formData: FormData) => {
   const suggestion = formData.get("suggestion")?.toString();
@@ -64,7 +119,7 @@ export const addEventAction = async (formData: FormData) => {
       date,
       time,
       type,
-      creator_uid: user.id,
+      user_uid: user.id,
     },
   ]);
 
