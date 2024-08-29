@@ -5,6 +5,52 @@ import { createClient } from "@/utils/supabase/server";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
+export const addEventAction = async (formData: FormData) => {
+  const title = formData.get("title")?.toString();
+  const description = formData.get("description")?.toString();
+  const date = formData.get("date")?.toString();
+  const time = formData.get("time")?.toString();
+  const type = formData.get("type")?.toString();
+  const supabase = createClient();
+  // Basic validation
+  if (!title || !description || !date || !time || !type) {
+    return { error: "All fields are required" };
+  }
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return encodedRedirect(
+      "error",
+      "/login",
+      "You must be logged in to add an event"
+    );
+  }
+
+  const { error } = await supabase.from("events").insert([
+    {
+      title,
+      description,
+      date,
+      time,
+      type,
+      creator_uid: user.id,
+    },
+  ]);
+
+  if (error) {
+    console.error(error.code + " " + error.message);
+    return encodedRedirect("error", "/calendar", error.message);
+  }
+
+  return encodedRedirect(
+    "success",
+    "/protected/calendar",
+    "Event added successfully"
+  );
+};
+
 export const signUpAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString();
   const password = formData.get("password")?.toString();
