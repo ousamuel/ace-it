@@ -7,6 +7,9 @@ import { GeistSans } from "geist/font/sans";
 import { ThemeProvider } from "next-themes";
 import Link from "next/link";
 import "./globals.css";
+import GoogleAnalytics from "@/components/analytics";
+import Head from "next/head";
+import { Analytics } from '@vercel/analytics/react'
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -25,7 +28,26 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={GeistSans.className} suppressHydrationWarning>
+      <Head>
+        <script
+              async
+              src={`https://www.googletagmanager.com/gtag/js?id=G-15T6ZRT6DS`}
+        />
+        <script
+            dangerouslySetInnerHTML={{
+              __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-15T6ZRT6DS', {
+                page_path: window.location.pathname,
+              });
+            `,
+            }}
+          />    
+      </Head>
       <body className="bg-background text-foreground">
+        <Analytics/>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
