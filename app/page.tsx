@@ -9,7 +9,7 @@ export default async function Index() {
       <Hero />
       <div className="w-full p-[1px] bg-gradient-to-r from-transparent via-foreground/10 to-transparent my-8" />
       <div className="flex flex-col gap-5 justify-center items-center pt-0">
-        <p className="text-5xl">Features</p>
+        <p className="text-4xl">Features</p>
         <div className="max-w-7xl mx-auto p-4 grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           
           {/* Card 1: Thinking AI Flashcard */}

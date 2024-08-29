@@ -46,7 +46,7 @@ export default function RootLayout({
                   {!hasEnvVars ? <EnvVarWarning /> : <HeaderAuth />}
                 </div>
               </nav>
-              <div className="flex flex-col w-full grow">
+              <div className="flex flex-col w-full grow px-3">
                 {children}
               </div>
 

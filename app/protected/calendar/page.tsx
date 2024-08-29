@@ -45,7 +45,7 @@ export default function Calendar({ searchParams }: { searchParams: Message }) {
     fetchUserAndEvents();
   }, [supabase, events]); // Add supabase to the dependency array
 
-  const handleChange = (e) => {
+  const handleChange = (e: any) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
@@ -114,7 +114,10 @@ export default function Calendar({ searchParams }: { searchParams: Message }) {
             <option value="other">Other</option>
           </select>
 
-          <SubmitButton formAction={addEventAction} pendingText="Adding Event...">
+          <SubmitButton
+            formAction={addEventAction}
+            pendingText="Adding Event..."
+          >
             Add Event
           </SubmitButton>
           <FormMessage message={searchParams} />
