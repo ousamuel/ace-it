@@ -1,6 +1,8 @@
 "use client";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid"; // a plugin!
+import interactionPlugin from "@fullcalendar/interaction";
+
 import { createClient } from "@/utils/supabase/client";
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
@@ -12,6 +14,8 @@ import { Message } from "@/components/form-message";
 export default function Calendar({ searchParams }: { searchParams: Message }) {
   const supabase = createClient();
   const [events, setEvents] = useState<any>([]);
+  const [selectedDateEvents, setSelectedDateEvents] = useState<any>([]);
+  const [selectedDate, setSelectedDate] = useState<any>(null);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -44,7 +48,15 @@ export default function Calendar({ searchParams }: { searchParams: Message }) {
     };
     fetchUserAndEvents();
   }, [supabase, events]); // Add supabase to the dependency array
-
+  const handleDateClick = (info: any) => {
+    const clickedDate = info.dateStr;
+    console.log(clickedDate);
+    setSelectedDate(clickedDate);
+    const filteredEvents = events.filter(
+      (event: any) => event.date === clickedDate
+    );
+    setSelectedDateEvents(filteredEvents);
+  };
   const handleChange = (e: any) => {
     setFormData({
       ...formData,
@@ -56,9 +68,11 @@ export default function Calendar({ searchParams }: { searchParams: Message }) {
     <div className="flex flex-col gap-10">
       <FullCalendar
         height="auto"
-        plugins={[dayGridPlugin]}
+        plugins={[dayGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"
         events={events}
+        selectable={true}
+        dateClick={handleDateClick}
       />
       <section className="flex flex-col gap-4">
         <form className="flex flex-col gap-4">

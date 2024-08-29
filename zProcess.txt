@@ -1,0 +1,11 @@
+
+
+
+
+
+for full calendar
+npm install --save \
+  @fullcalendar/core \
+  @fullcalendar/react \
+  @fullcalendar/daygrid \
+  @fullcalendar/interaction

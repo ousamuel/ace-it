@@ -35,18 +35,21 @@ export default function RootLayout({
           <main className="min-h-screen flex flex-col items-center">
             <div className="flex-1 w-full flex flex-col gap-20 items-center">
               <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
-              
                 <div className="w-full max-w-5xl flex justify-between items-center p-3 px-5 text-3xl">
                   <div className="flex gap-5 items-center font-semibold">
                     <div className="flex flex-row gap-1">
-                      <h1><a href="/">ACE</a></h1>
-                      <h1 className="text-green-500"><a href="/">IT</a></h1>
+                      <h1>
+                        <a href="/">ACE</a>
+                      </h1>
+                      <h1 className="text-green-500">
+                        <a href="/">IT</a>
+                      </h1>
                     </div>
                   </div>
                   {!hasEnvVars ? <EnvVarWarning /> : <HeaderAuth />}
                 </div>
               </nav>
-              <div className="flex flex-col w-full grow px-3">
+              <div className="flex justify-center w-full grow px-3">
                 {children}
               </div>
 
