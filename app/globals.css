@@ -68,4 +68,6 @@
   }
 }
 
-
+.fc .fc-toolbar {
+  flex-wrap: wrap;
+}

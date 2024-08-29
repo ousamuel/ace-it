@@ -36,7 +36,7 @@ export default function Signup({ searchParams }: { searchParams: Message }) {
         <Input
           type="password"
           name="password"
-          placeholder="••••••••••"
+          placeholder="••••••••"
           minLength={6}
           required
         />
@@ -44,7 +44,7 @@ export default function Signup({ searchParams }: { searchParams: Message }) {
         <Input
           type="password"
           name="confirmPassword"
-          placeholder="Confirm your password"
+          placeholder="••••••••"
           minLength={6}
           required
         />

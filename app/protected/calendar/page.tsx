@@ -65,7 +65,7 @@ export default function Calendar({ searchParams }: { searchParams: Message }) {
   };
 
   return (
-    <div className="flex flex-col gap-10">
+    <div className="flex flex-col gap-10 ">
       <FullCalendar
         height="auto"
         plugins={[dayGridPlugin, interactionPlugin]}
