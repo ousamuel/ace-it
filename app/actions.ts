@@ -5,6 +5,35 @@ import { createClient } from "@/utils/supabase/server";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
+export const addSuggestionAction = async (formData: FormData) => {
+  const suggestion = formData.get("suggestion")?.toString();
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return encodedRedirect(
+      "error",
+      "/waitlist",
+      "You must be logged in to submit a suggestion"
+    );
+  }
+  const { error } = await supabase.from("suggestions").insert([
+    {
+      suggestion,
+      email: user.email,
+      user_uid: user.id,
+    },
+  ]);
+
+  if (error) {
+    // console.error(error.code + " " + error.message);
+    return encodedRedirect("error", "/waitlist", error.message);
+  }
+
+  return encodedRedirect("success", "/waitlist", "Suggestion submitted!");
+};
 export const addEventAction = async (formData: FormData) => {
   const title = formData.get("title")?.toString();
   const description = formData.get("description")?.toString();

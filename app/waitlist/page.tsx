@@ -2,8 +2,16 @@ import FetchDataSteps from "@/components/tutorial/fetch-data-steps";
 import { createClient } from "@/utils/supabase/server";
 import { InfoIcon } from "lucide-react";
 import { redirect } from "next/navigation";
-
-export default async function ProtectedPage() {
+import { addSuggestionAction } from "../actions";
+import { FormMessage, Message } from "@/components/form-message";
+import { SubmitButton } from "@/components/submit-button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+export default async function Waitlist({
+  searchParams,
+}: {
+  searchParams: Message;
+}) {
   const supabase = createClient();
 
   const {
@@ -22,6 +30,25 @@ export default async function ProtectedPage() {
       <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
         Our app will soon be out of development and ready to save your grades!
       </h3>
+      <form className="flex flex-col w-full max-w-md p-4 gap-2 [&>input]:mb-4 mx-auto">
+        <div className="flex flex-col gap-2 [&>input]:mb-3 mt-8">
+          <Label className="text-md text-muted-foreground" htmlFor="suggestion">
+            If you have any suggestions or features you would like to see,
+            please let us know here!
+          </Label>
+          <Input
+            type="text"
+            name="suggestion"
+            placeholder="E.G. 'I would like to see an interactive calendar' "
+            // minLength={6}
+            required
+          />
+          <SubmitButton formAction={addSuggestionAction} pendingText="Submitting...">
+            Submit
+          </SubmitButton>
+          <FormMessage message={searchParams} />
+        </div>
+      </form>
     </div>
   );
 }
