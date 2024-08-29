@@ -29,7 +29,10 @@ export const addFlashcards = async (formData: FormData) => {
   }
 
   // Call the AI API to generate flashcards
-  const response = await fetch(`/api/generate`, {
+  const origin = headers().get("origin");
+  const apiUrl = `${origin}/api/generate`;
+
+  const response = await fetch(apiUrl, {
     method: "POST",
     body: notes,
   });
@@ -50,12 +53,12 @@ export const addFlashcards = async (formData: FormData) => {
   );
 
   if (error) {
-    return encodedRedirect("error", "/flashcards", error.message);
+    return encodedRedirect("error", "/protected/flashcards/generate", error.message);
   }
 
   return encodedRedirect(
     "success",
-    "/flashcards/generate",
+    "/protected/flashcards/generate",
     "Flashcards generated and saved successfully!"
   );
 };

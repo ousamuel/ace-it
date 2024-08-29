@@ -51,7 +51,7 @@ export default function GenerateFlashcards({ searchParams }: { searchParams: Mes
       if (response?.error) {
         console.error(response.error);
       } else {
-        router.push("/flashcards");
+        router.push("/protected/flashcards/generate");
       }
     };
   
