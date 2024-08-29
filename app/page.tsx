@@ -2,10 +2,15 @@ import Hero from "@/components/hero";
 import ConnectSupabaseSteps from "@/components/tutorial/connect-supabase-steps";
 import SignUpUserSteps from "@/components/tutorial/sign-up-user-steps";
 import { hasEnvVars } from "@/utils/supabase/check-env-vars";
+import Head from "next/head";
+import GoogleAnalytics from "@/components/analytics";
 
 export default async function Index() {
   return (
     <div>
+      <Head>
+        <GoogleAnalytics/>
+      </Head>
       <Hero />
       <div className="w-full p-[1px] bg-gradient-to-r from-transparent via-foreground/10 to-transparent my-8" />
       <div className="flex flex-col gap-5 justify-center items-center pt-0">
