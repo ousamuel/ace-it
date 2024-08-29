@@ -1,44 +1,24 @@
 import NextLogo from "./next-logo";
 import SupabaseLogo from "./supabase-logo";
+import Link from "next/link";
 
 export default function Header() {
   return (
-    <div className="flex flex-col gap-16 items-center">
-      <div className="flex gap-8 justify-center items-center">
-        <a
-          href="https://supabase.com/?utm_source=create-next-app&utm_medium=template&utm_term=nextjs"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <SupabaseLogo />
-        </a>
-        <span className="border-l rotate-45 h-6" />
-        <a href="https://nextjs.org/" target="_blank" rel="noreferrer">
-          <NextLogo />
-        </a>
-      </div>
-      <h1 className="sr-only">Supabase and Next.js Starter Template</h1>
-      <p className="text-3xl lg:text-4xl !leading-tight mx-auto max-w-xl text-center">
-        The fastest way to build apps with{" "}
-        <a
-          href="https://supabase.com/?utm_source=create-next-app&utm_medium=template&utm_term=nextjs"
-          target="_blank"
-          className="font-bold hover:underline"
-          rel="noreferrer"
-        >
-          Supabase
-        </a>{" "}
-        and{" "}
-        <a
-          href="https://nextjs.org/"
-          target="_blank"
-          className="font-bold hover:underline"
-          rel="noreferrer"
-        >
-          Next.js
-        </a>
+    <div className="flex flex-col gap-8 items-center py-[150px] pb-[150px]">
+      <p className="text-5xl lg:text-6xl !leading-tight mx-auto text-center">
+        <div className="flex flex-col gap-2 p">
+          <h1>The fastest way to ACE your classes{" "}</h1>
+          <h1 className="text-green-500">Take the stress away from your studying</h1>
+        </div>
       </p>
-      <div className="w-full p-[1px] bg-gradient-to-r from-transparent via-foreground/10 to-transparent my-8" />
+      <button className={`
+        p-2 bg-green-500 text-2xl lg:text-2xl text-white
+        border border-zinc-200 shadow-lg rounded-2xl hover:bg-green-500 
+        hover:text-white hover:text-4xl 
+        hover:shadow-xl hover:shadow-green-500/50 
+        transition-all duration-300 ease-in-out transform`}><Link href="/sign-up">
+          Join the Waitlist</Link></button>
+      {/* <div className="w-full p-[1px] bg-gradient-to-r from-transparent via-foreground/10 to-transparent my-8" /> */}
     </div>
   );
 }
