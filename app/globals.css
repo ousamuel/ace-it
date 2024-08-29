@@ -71,3 +71,7 @@
 .fc .fc-toolbar {
   flex-wrap: wrap;
 }
+.fc-daygrid-day:hover {
+  cursor: pointer;
+  background-color: rgba(231, 231, 231, 0.335);;
+}

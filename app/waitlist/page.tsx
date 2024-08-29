@@ -23,14 +23,14 @@ export default async function Waitlist({
   }
 
   return (
-    <div className="flex-1 w-full flex flex-col gap-12 text-center">
+    <div className="flex-1 w-full flex flex-col gap-12 text-center items-center px-3">
       <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
         Thanks for joining our waitlist!
       </h1>
-      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
+      <h3 className="sm:w-3/5 scroll-m-20 text-2xl font-semibold tracking-tight">
         Our app will soon be out of development and ready to save your grades!
       </h3>
-      <form className="flex flex-col w-full max-w-md p-4 gap-2 [&>input]:mb-4 mx-auto">
+      <form className="flex flex-col w-full max-w-md p-4 gap-2 [&>input]:mb-4">
         <div className="flex flex-col gap-2 [&>input]:mb-3 mt-8">
           <Label className="text-md text-muted-foreground" htmlFor="suggestion">
             If you have any suggestions or features you would like to see,
@@ -43,7 +43,10 @@ export default async function Waitlist({
             // minLength={6}
             required
           />
-          <SubmitButton formAction={addSuggestionAction} pendingText="Submitting...">
+          <SubmitButton
+            formAction={addSuggestionAction}
+            pendingText="Submitting..."
+          >
             Submit
           </SubmitButton>
           <FormMessage message={searchParams} />

@@ -9,8 +9,8 @@ import Link from "next/link";
 import "./globals.css";
 import GoogleAnalytics from "@/components/analytics";
 import Head from "next/head";
-import { Analytics } from '@vercel/analytics/react'
-import { SpeedInsights } from "@vercel/speed-insights/next"
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
   : "http://localhost:3000";
@@ -30,12 +30,12 @@ export default function RootLayout({
     <html lang="en" className={GeistSans.className} suppressHydrationWarning>
       <Head>
         <script
-              async
-              src={`https://www.googletagmanager.com/gtag/js?id=G-15T6ZRT6DS`}
+          async
+          src={`https://www.googletagmanager.com/gtag/js?id=G-15T6ZRT6DS`}
         />
         <script
-            dangerouslySetInnerHTML={{
-              __html: `
+          dangerouslySetInnerHTML={{
+            __html: `
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
@@ -43,12 +43,12 @@ export default function RootLayout({
                 page_path: window.location.pathname,
               });
             `,
-            }}
-          />    
+          }}
+        />
       </Head>
       <body className="bg-background text-foreground">
-        <Analytics/>
-        <SpeedInsights/>
+        <Analytics />
+        <SpeedInsights />
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -60,14 +60,10 @@ export default function RootLayout({
               <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
                 <div className="w-full max-w-5xl flex justify-between items-center p-3 px-5 text-3xl">
                   <div className="flex gap-5 items-center font-semibold">
-                    <div className="flex flex-row gap-1">
-                      <h1>
-                        <a href="/">ACE</a>
-                      </h1>
-                      <h1 className="text-green-500">
-                        <a href="/">IT</a>
-                      </h1>
-                    </div>
+                    <Link href="/" className="flex flex-row gap-1">
+                      <h1>ACE</h1>
+                      <h1 className="text-green-500">IT</h1>
+                    </Link>
                   </div>
                   {!hasEnvVars ? <EnvVarWarning /> : <HeaderAuth />}
                 </div>
@@ -97,7 +93,7 @@ export default function RootLayout({
                     Samuel Ou
                   </a>
                 </p>
-                {/* <ThemeSwitcher /> */}
+                <ThemeSwitcher />
               </footer>
             </div>
           </main>
