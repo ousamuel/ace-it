@@ -10,7 +10,7 @@ import "./globals.css";
 import GoogleAnalytics from "@/components/analytics";
 import Head from "next/head";
 import { Analytics } from '@vercel/analytics/react'
-
+import { SpeedInsights } from "@vercel/speed-insights/next"
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
   : "http://localhost:3000";
@@ -48,6 +48,7 @@ export default function RootLayout({
       </Head>
       <body className="bg-background text-foreground">
         <Analytics/>
+        <SpeedInsights/>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
