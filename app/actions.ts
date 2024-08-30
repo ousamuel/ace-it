@@ -11,6 +11,8 @@ export const addFlashcards = async (formData: FormData) => {
   const question = formData.get("question")?.toString();
   const answer = formData.get("answer")?.toString();
   const notes = formData.get("notes")?.toString();
+  const setName = formData.get("setName")?.toString();
+
 
   if (!notes) {
     return { error: "Notes are required to generate flashcards" };
@@ -53,7 +55,7 @@ export const addFlashcards = async (formData: FormData) => {
   );
 
   if (error) {
-    return encodedRedirect("error", "/protected/flashcards/generate", error.message);
+    return encodedRedirect("error", "/protected/flashcards/", error.message);
   }
 
   return encodedRedirect(
