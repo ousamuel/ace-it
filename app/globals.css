@@ -73,5 +73,10 @@
 }
 .fc-daygrid-day:hover {
   cursor: pointer;
-  background-color: rgba(231, 231, 231, 0.335);;
+  background-color: rgba(231, 231, 231, 0.335);
+}
+.fc-event-main,
+.fc-daygrid-event-harness {
+  pointer-events: none;
+  z-index: -1;
 }
