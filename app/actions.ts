@@ -11,6 +11,11 @@ export const addFlashcards = async (formData: FormData) => {
   const question = formData.get("question")?.toString();
   const answer = formData.get("answer")?.toString();
   const notes = formData.get("notes")?.toString();
+  const setName = formData.get("setName")?.toString();
+  // const setId = formData.get("setId")?.toString();
+
+
+
 
   if (!notes) {
     return { error: "Notes are required to generate flashcards" };
@@ -49,11 +54,13 @@ export const addFlashcards = async (formData: FormData) => {
       question: card.front,
       answer: card.back,
       user_uid: user.id,
+      set_name: setName
+      // setId: setId
     }))
   );
 
   if (error) {
-    return encodedRedirect("error", "/protected/flashcards/generate", error.message);
+    return encodedRedirect("error", "/protected/flashcards/", error.message);
   }
 
   return encodedRedirect(
