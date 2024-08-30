@@ -17,7 +17,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-
+import { Message } from "@/components/form-message";
 export default function Calendar({ searchParams }: { searchParams: Message }) {
   const supabase = createClient();
   const [events, setEvents] = useState<any[]>([]);
