@@ -12,6 +12,9 @@ export const addFlashcards = async (formData: FormData) => {
   const answer = formData.get("answer")?.toString();
   const notes = formData.get("notes")?.toString();
   const setName = formData.get("setName")?.toString();
+  // const setId = formData.get("setId")?.toString();
+
+
 
 
   if (!notes) {
@@ -51,6 +54,8 @@ export const addFlashcards = async (formData: FormData) => {
       question: card.front,
       answer: card.back,
       user_uid: user.id,
+      set_name: setName
+      // setId: setId
     }))
   );
 

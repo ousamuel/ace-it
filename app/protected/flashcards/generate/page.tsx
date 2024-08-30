@@ -1,4 +1,4 @@
-//generate/page.tsx
+// generate/page.tsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -22,57 +22,48 @@ export default function GenerateFlashcards({ searchParams }: { searchParams: Mes
 
     useEffect(() => {
         const fetchUserFlashcards = async () => {
-            const {
-                data: { user },
-            } = await supabase.auth.getUser();
-
-            if (!user) {
-                return redirect("/sign-in");
-            }
-
-            const { data, error } = await supabase
-                .from("flashcards")
-                .select("*")
-                .eq("user_uid", user.id);
-
-            if (data) {
-                setFlashcards(data);
-            } else if (error) {
-                console.error("Error fetching flashcards:", error);
-            }
+          const {
+            data: { user },
+          } = await supabase.auth.getUser();
+    
+          if (!user) {
+            return redirect("/sign-in");
+          }
+    
+          const { data, error } = await supabase
+            .from("flashcards")
+            .select("*")
+            .eq("user_uid", user.id);
+    
+          if (data) {
+            setFlashcards(data);
+          } else if (error) {
+            console.error("Error fetching flashcards:", error);
+          }
         };
-
+    
         fetchUserFlashcards();
-    }, [flashcards, supabase]);
-
-    const handleSubmit = async () => {
+      }, [flashcards, supabase]);
+    
+      const handleSubmit = async () => {
         // Generate a unique set ID
-        const setId = uuidv4();
+        // const setId = uuidv4();
 
-        // Save the flashcards set information
-        const { error: setError } = await supabase
-            .from("flashcard_sets")
-            .insert([
-                { set_id: setId, set_name: setName },
-            ]);
-
-        if (setError) {
-            console.error("Error saving flashcard set:", setError);
-            return;
-        }
-
-        // Prepare the data for saving flashcards
         const formData = new FormData();
         formData.append("notes", notes);
-        formData.append("set_id", setId);
+        formData.append("setName", setName);
+        // formData.append("setId", setId);
 
+        
+
+    
         const response = await addFlashcards(formData);
         if (response?.error) {
-            console.error(response.error);
+          console.error(response.error);
         } else {
-            router.push("/protected/flashcards/generate");
+          router.push("/protected/flashcards/generate");
         }
-    };
+      };
 
     return (
         <div className="flex flex-col gap-12 text-center">
@@ -83,28 +74,31 @@ export default function GenerateFlashcards({ searchParams }: { searchParams: Mes
                 Create custom flashcards to enhance your studying!
             </h3>
 
-            <form className="flex flex-col w-full max-w-md p-4 gap-2 mx-auto">
+            <form className="flex flex-col w-full max-w-md p-4 gap-2 mx-auto" onSubmit={handleSubmit}>
                 <div className="flex flex-col gap-4 mt-8">
-                    <Label htmlFor="title">Flashcard Set</Label>
+                    <Label htmlFor="setName">Flashcard Set</Label>
                     <Input
                         type="text"
-                        name="title"
+                        id="setName"
+                        name="setName"
                         placeholder="E.G. English Exam"
                         value={setName}
                         onChange={(e) => setSetName(e.target.value)}
                         required
                     />
-                    <Label htmlFor="title">Notes</Label>
+                    <Label htmlFor="notes">Notes</Label>
                     <textarea
+                        id="notes"
+                        name="notes"
                         className="w-full p-2 border rounded"
                         placeholder="Enter topics or notes you would like to study!"
                         value={notes}
                         onChange={(e) => setNotes(e.target.value)}
                         rows={4}
+                        required
                     />
                     <button
-                        type="button"
-                        onClick={handleSubmit}
+                        type="submit"
                         className="px-4 py-2 font-bold text-white bg-green-700 rounded hover:bg-green-500"
                     >
                         Generate Flashcards
