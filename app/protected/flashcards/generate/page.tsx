@@ -91,7 +91,7 @@ export default function GenerateFlashcards({ searchParams }: { searchParams: Mes
                         id="notes"
                         name="notes"
                         className="w-full p-2 border rounded"
-                        placeholder="Enter topics or notes you would like to study!"
+                        placeholder="Enter topics or notes you would like to study and tell us how many flashcards you want"
                         value={notes}
                         onChange={(e) => setNotes(e.target.value)}
                         rows={4}
