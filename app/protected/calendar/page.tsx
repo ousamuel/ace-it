@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SubmitButton } from "@/components/submit-button";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogContent,
@@ -17,16 +18,27 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { Message } from "@/components/form-message";
 export default function Calendar({ searchParams }: { searchParams: Message }) {
   const supabase = createClient();
   const [events, setEvents] = useState<any[]>([]);
+  const [pinnedEvents, setPinnedEvents] = useState<any[]>([]);
   const [selectedDateEvents, setSelectedDateEvents] = useState<any[]>([]);
   const [selectedDate, setSelectedDate] = useState<any>(null);
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const [isAddingEvent, setIsAddingEvent] = useState<boolean>(false);
+  const [isEditingEvent, setIsEditingEvent] = useState<boolean>(false);
+  const [eventID, setEventID] = useState<string>("");
   const [isAllDay, setIsAllDay] = useState<any>(false);
   const [formData, setFormData] = useState({
     title: "",
@@ -52,6 +64,7 @@ export default function Calendar({ searchParams }: { searchParams: Message }) {
 
         if (data) {
           setEvents(data);
+         
         } else if (error) {
           console.error("Error fetching events:", error);
         }
@@ -59,31 +72,46 @@ export default function Calendar({ searchParams }: { searchParams: Message }) {
     };
     fetchUserAndEvents();
   }, [supabase]);
-
-  const handleDateClick = (info: any) => {
-    // console.log(info.dateStr);
+  
+  const resetForm = () => {
     setFormData({
       title: "",
       description: "",
-      date: "",
+      date: selectedDate,
       allDay: false,
       timeStart: "",
       timeEnd: "",
       type: "exam",
-    }); //reset form
+    });
+  };
+  const handleDateClick = (info: any) => {
+    resetForm();
     setIsDialogOpen(true);
-    setIsAddingEvent(false); // Start by showing existing events
     const clickedDate = info.dateStr;
     setFormData((prevData) => ({
       ...prevData,
       date: clickedDate,
     }));
     setSelectedDate(clickedDate);
+    console.log(events);
     const filteredEvents = events.filter(
       (event: any) => event.date === clickedDate
     );
-    console.log(filteredEvents);
     setSelectedDateEvents(sortByTime(filteredEvents));
+  };
+  const pinEventAction = async (prevState: boolean, event_id: number) => {
+    const { error } = await supabase
+      .from("events")
+      .update({
+        pinned: !prevState,
+      })
+      .eq("id", event_id);
+
+    if (error) {
+      console.error("Error updating event:", error);
+    } else {
+      return;
+    }
   };
   const sortByTime = (arr: any) => {
     return arr.sort((a: any, b: any) => {
@@ -109,11 +137,65 @@ export default function Calendar({ searchParams }: { searchParams: Message }) {
       timeEnd: "",
     }));
   };
-  const addEventAction = async (e: any) => {
+  const editEventAction = async (e: any) => {
     e.preventDefault();
     const { title, description, date, allDay, timeStart, timeEnd, type } =
       formData;
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
+    if (!user) {
+      return; // Handle user not logged in case
+    }
+
+    const { error } = await supabase
+      .from("events")
+      .update({
+        title,
+        description,
+        date,
+        all_day: allDay,
+        time_start: timeStart ? timeStart : null,
+        time_end: timeEnd ? timeEnd : null,
+        type,
+      })
+      .eq("id", eventID);
+
+    if (error) {
+      console.error("Error updating event:", error);
+    } else {
+      setEvents((prevEvents) =>
+        prevEvents.map((ev) =>
+          ev.id === eventID
+            ? {
+                ...ev,
+                title,
+                description,
+                date,
+                all_day: allDay,
+                time_start: timeStart,
+                time_end: timeEnd,
+                type,
+              }
+            : ev
+        )
+      );
+      setIsDialogOpen(false); // Close dialog after saving
+      setIsEditingEvent(false); // Reset editing state
+    }
+  };
+  const addEventAction = async (e: any) => {
+    console.log("add");
+    e.preventDefault();
+    const { title, description, date, allDay, timeStart, timeEnd, type } =
+      formData;
+    if (!title || !description || !date) {
+      return;
+    }
+    if (!allDay && (!timeStart || !timeEnd)) {
+      return;
+    }
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -126,8 +208,8 @@ export default function Calendar({ searchParams }: { searchParams: Message }) {
         description,
         date,
         all_day: allDay,
-        time_start: timeStart ? timeStart : null,
-        time_end: timeEnd ? timeEnd : null,
+        time_start: allDay ? null : timeStart, // Only pass times if not all-day
+        time_end: allDay ? null : timeEnd,
         type,
         user_uid: user.id,
       },
@@ -151,15 +233,6 @@ export default function Calendar({ searchParams }: { searchParams: Message }) {
         },
       ]);
       setIsDialogOpen(false);
-      setFormData({
-        title: "",
-        description: "",
-        date: "",
-        allDay: false,
-        timeStart: "",
-        timeEnd: "",
-        type: "exam",
-      });
     }
   };
 
@@ -178,8 +251,15 @@ export default function Calendar({ searchParams }: { searchParams: Message }) {
   const capitalizeFirstLetter = (str: string) => {
     return str.charAt(0).toUpperCase() + str.slice(1);
   };
+
   return (
-    <div className="flex flex-col gap-10">
+    <div className="flex flex-col gap-2">
+      <h2
+        className=" border-b pb-2 text-3xl  
+      text-center font-semibold tracking-tight first:mt-0"
+      >
+        My Calendar
+      </h2>
       <FullCalendar
         height="auto"
         plugins={[dayGridPlugin, interactionPlugin]}
@@ -195,7 +275,17 @@ export default function Calendar({ searchParams }: { searchParams: Message }) {
         dateClick={handleDateClick}
       />
 
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      <Dialog
+        open={isDialogOpen}
+        onOpenChange={(open) => {
+          if (!open) {
+            setIsAddingEvent(false);
+            setIsEditingEvent(false);
+            resetForm();
+          }
+          setIsDialogOpen(open);
+        }}
+      >
         <DialogContent>
           <DialogHeader className="border-b pb-2">
             <DialogTitle>
@@ -205,12 +295,14 @@ export default function Calendar({ searchParams }: { searchParams: Message }) {
               </p>
             </DialogTitle>
             <DialogDescription>
-              {isAddingEvent ? "Add a new event for this date." : null}
+              {isAddingEvent
+                ? "Add a new event for this date."
+                : isEditingEvent && `Currently editing`}
             </DialogDescription>
           </DialogHeader>
 
           <div className="px-2 max-h-[60vh] overflow-auto flex flex-col gap-4 ">
-            {!isAddingEvent && (
+            {!isAddingEvent && !isEditingEvent && (
               <>
                 {selectedDateEvents.length > 0 ? (
                   <div>
@@ -230,12 +322,58 @@ export default function Calendar({ searchParams }: { searchParams: Message }) {
                                 -
                               </section> */}
                               <section>
-                                <h3 className="flex gap-3 scroll-m-20 text-2xl font-semibold tracking-tight">
+                                <h4 className="scroll-m-20 text-xl font-semibold tracking-tight flex gap-3">
                                   <p>{capitalizeFirstLetter(event.title)}</p>
-                                  <span className="flex text-center items-center relative rounded bg-muted px-[0.4rem] py-[0.1rem] font-mono text-sm font-semibold">
-                                    {event.type.toUpperCase()}{" "}
-                                  </span>
-                                </h3>
+                                  <Badge>{event.type.toUpperCase()} </Badge>
+                                  <DropdownMenu>
+                                    <DropdownMenuTrigger>
+                                      <img
+                                        className="dark:bg-white dark:rounded-sm py-1"
+                                        width={20}
+                                        src="/options.svg"
+                                      />
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent>
+                                      <DropdownMenuItem
+                                        onClick={() => {
+                                          setIsEditingEvent(true);
+                                          setIsAddingEvent(false); // Disable add event mode
+                                          setIsDialogOpen(true); // Open the dialog for editing
+                                          setEventID(event.id);
+                                          setFormData({
+                                            title: event.title,
+                                            description: event.description,
+                                            date: event.date,
+                                            allDay: event.all_day,
+                                            timeStart: event.time_start,
+                                            timeEnd: event.time_end,
+                                            type: event.type,
+                                          });
+                                        }}
+                                      >
+                                        Edit
+                                      </DropdownMenuItem>
+                                      <DropdownMenuItem
+                                        onClick={() => {
+                                          pinEventAction(
+                                            event.pinned,
+                                            event.id
+                                          );
+                                        }}
+                                      >
+                                        {event.pinned ? "Pinned" : "Pin"}
+                                      </DropdownMenuItem>
+                                      <DropdownMenuSeparator />
+
+                                      <DropdownMenuItem
+                                        id="delete-event"
+                                        className="text-red-500 hover:bg-red-800"
+                                      >
+                                        Delete
+                                      </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                  </DropdownMenu>
+                                </h4>
                                 <p className="leading-7 [&:not(:first-child)]:mt-1">
                                   {event.description}
                                 </p>
@@ -244,47 +382,99 @@ export default function Calendar({ searchParams }: { searchParams: Message }) {
                           ))}
                       </div>
                     </section>
-                    <section
-                      id="timed-events"
-                      className="border-t-2 border-gray-500 pt-2 mt-2 gap-y-2"
-                    >
-                      {selectedDateEvents
-                        .filter((event: any) => !event.all_day)
-                        .map((event: any, i: number) => (
-                          <div
-                            key={i}
-                            className={`flex flex-col gap-2 ${i > 0 && `border-t mt-2 pt-2`}`}
-                          >
-                            <section className="text-md flex items-center gap-2">
-                              <p className="whitespace-nowrap">
-                                {convertTimeTo12HourFormat(event.time_start)}
-                              </p>
-                              <p>-</p>
-                              <p className="whitespace-nowrap">
-                                {convertTimeTo12HourFormat(event.time_end)}
-                              </p>
-                            </section>
-                            <section>
-                              <h3 className="flex gap-3 scroll-m-20 text-2xl font-semibold tracking-tight">
-                                <p>{capitalizeFirstLetter(event.title)}</p>
-                                <span className="flex text-center items-center relative rounded bg-muted px-[0.4rem] py-[0.1rem] font-mono text-sm font-semibold">
-                                  {event.type.toUpperCase()}{" "}
-                                </span>
-                              </h3>
-                              <p className="leading-7 [&:not(:first-child)]:mt-1">
-                                {event.description}
-                              </p>
-                            </section>
-                          </div>
-                        ))}
-                    </section>
+                    {selectedDateEvents.filter((event: any) => !event.all_day)
+                      .length > 0 && (
+                      <section
+                        id="timed-events"
+                        className="border-t-2 border-gray-500 pt-2 mt-2 gap-y-2"
+                      >
+                        {selectedDateEvents
+                          .filter((event: any) => !event.all_day)
+                          .map((event: any, i: number) => (
+                            <div
+                              key={i}
+                              className={`flex flex-col gap-1 ${i > 0 && `border-t mt-2 pt-2`}`}
+                            >
+                              <section className="text-md flex justify-between">
+                                <div className="flex gap-2">
+                                  <p className="whitespace-nowrap">
+                                    {convertTimeTo12HourFormat(
+                                      event.time_start
+                                    )}
+                                  </p>
+                                  <p>-</p>
+                                  <p className="whitespace-nowrap ">
+                                    {convertTimeTo12HourFormat(event.time_end)}
+                                  </p>
+                                  <Badge>{event.type.toUpperCase()} </Badge>
+                                </div>
+                                <DropdownMenu>
+                                  <DropdownMenuTrigger>
+                                    <img
+                                      className="dark:bg-white dark:rounded-sm py-1"
+                                      width={20}
+                                      src="/options.svg"
+                                    />
+                                  </DropdownMenuTrigger>
+                                  <DropdownMenuContent>
+                                    <DropdownMenuItem
+                                      onClick={() => {
+                                        setIsEditingEvent(true);
+                                        setIsAddingEvent(false); // Disable add event mode
+                                        setIsDialogOpen(true); // Open the dialog for editing
+                                        setEventID(event.id);
+                                        setFormData({
+                                          title: event.title,
+                                          description: event.description,
+                                          date: event.date,
+                                          allDay: event.all_day,
+                                          timeStart: event.time_start,
+                                          timeEnd: event.time_end,
+                                          type: event.type,
+                                        });
+                                      }}
+                                    >
+                                      Edit
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                      onClick={() => {
+                                        pinEventAction(event.pinned, event.id);
+                                      }}
+                                    >
+                                      {event.pinned ? "Pinned" : "Pin"}
+                                    </DropdownMenuItem>{" "}
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem
+                                      id="delete-event"
+                                      className="text-red-500 hover:bg-red-800"
+                                    >
+                                      Delete
+                                    </DropdownMenuItem>
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
+                              </section>
+                              <section className="">
+                                <h4 className="scroll-m-20 text-xl font-semibold tracking-tight flex gap-3">
+                                  <p>{capitalizeFirstLetter(event.title)}</p>
+                                </h4>
+                                <p className="leading-7 [&:not(:first-child)]:mt-1">
+                                  {event.description}
+                                </p>
+                              </section>
+                            </div>
+                          ))}
+                      </section>
+                    )}
                   </div>
                 ) : (
                   <div className="flex flex-col gap-4">
                     <p>No events for this date. You can add one below.</p>
                     <Button
-                      className="w-full"
-                      onClick={() => setIsAddingEvent(true)}
+                      className=""
+                      onClick={() => {
+                        setIsAddingEvent(true);
+                        resetForm();
+                      }}
                     >
                       Add Event
                     </Button>
@@ -293,8 +483,11 @@ export default function Calendar({ searchParams }: { searchParams: Message }) {
               </>
             )}
 
-            {isAddingEvent && (
-              <form onSubmit={addEventAction} className="flex flex-col gap-4">
+            {(isAddingEvent || isEditingEvent) && (
+              <form
+                onSubmit={isAddingEvent ? addEventAction : editEventAction}
+                className="flex flex-col gap-4"
+              >
                 <div className="flex flex-col md:flex-row gap-4">
                   <section className="flex flex-1 flex-col gap-4">
                     <Label htmlFor="title">Title</Label>
@@ -379,7 +572,7 @@ export default function Calendar({ searchParams }: { searchParams: Message }) {
                   </section>
                 </div>
 
-                <SubmitButton type="submit" pendingText="Adding Event...">
+                <SubmitButton type="submit" pendingText="Saving Event...">
                   Save
                 </SubmitButton>
               </form>
@@ -387,15 +580,97 @@ export default function Calendar({ searchParams }: { searchParams: Message }) {
           </div>
 
           <DialogFooter className="border-t pt-2">
-            {!isAddingEvent && selectedDateEvents.length > 0 && (
-              <Button className="w-full" onClick={() => setIsAddingEvent(true)}>
-                Add Event
-              </Button>
-            )}
+            {!isAddingEvent &&
+              !isEditingEvent &&
+              selectedDateEvents.length > 0 && (
+                <Button
+                  className=""
+                  onClick={() => {
+                    setIsAddingEvent(true);
+                    resetForm();
+                  }}
+                >
+                  Add New Event
+                </Button>
+              )}
             <Button onClick={() => setIsDialogOpen(false)}>Close</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {pinnedEvents &&
+        pinnedEvents.map((event: any, i: number) => (
+          <div
+            key={i}
+            className={`flex flex-col gap-1 ${i > 0 && `border-t mt-2 pt-2`}`}
+          >
+            <section className="text-md flex justify-between">
+              <div className="flex gap-2">
+                <p className="whitespace-nowrap">
+                  {event.time_start &&
+                    convertTimeTo12HourFormat(event.time_start)}
+                </p>
+                <p>-</p>
+                <p className="whitespace-nowrap ">
+                  {event.time_end && convertTimeTo12HourFormat(event.time_end)}
+                </p>
+                <Badge>{event.type.toUpperCase()} </Badge>
+              </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger>
+                  <img
+                    className="dark:bg-white dark:rounded-sm py-1"
+                    width={20}
+                    src="/options.svg"
+                  />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      setIsEditingEvent(true);
+                      setIsAddingEvent(false); // Disable add event mode
+                      setIsDialogOpen(true); // Open the dialog for editing
+                      setEventID(event.id);
+                      setFormData({
+                        title: event.title,
+                        description: event.description,
+                        date: event.date,
+                        allDay: event.all_day,
+                        timeStart: event.time_start,
+                        timeEnd: event.time_end,
+                        type: event.type,
+                      });
+                    }}
+                  >
+                    Edit
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      pinEventAction(event.pinned, event.id);
+                    }}
+                  >
+                    {event.pinned ? "Pinned" : "Pin"}
+                  </DropdownMenuItem>{" "}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    id="delete-event"
+                    className="text-red-500 hover:bg-red-800"
+                  >
+                    Delete
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </section>
+            <section className="">
+              <h4 className="scroll-m-20 text-xl font-semibold tracking-tight flex gap-3">
+                <p>{capitalizeFirstLetter(event.title)}</p>
+              </h4>
+              <p className="leading-7 [&:not(:first-child)]:mt-1">
+                {event.description}
+              </p>
+            </section>
+          </div>
+        ))}
     </div>
   );
 }

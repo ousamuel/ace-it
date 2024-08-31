@@ -73,7 +73,7 @@
 }
 @media (max-width: 600px) {
   .fc .fc-toolbar {
-    align-items: start;
+    align-items: center;
     flex-direction: column;
   }
 }
@@ -85,4 +85,9 @@
 .fc-daygrid-event-harness {
   pointer-events: none;
   z-index: -1;
+}
+
+#delete-event:hover {
+  background-color: rgb(255, 207, 207);
+  color: red;
 }

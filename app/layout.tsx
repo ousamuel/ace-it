@@ -72,13 +72,13 @@ export default function RootLayout({
                 {children}
               </div>
 
-              <footer className="w-full flex items-center justify-center border-t mx-auto text-center text-xs gap-8 py-10">
+              <footer className="w-full flex items-center justify-center border-t mx-auto text-center text-xs gap-8 py-6 px-6">
                 <p className="text-sm text-muted-foreground">
                   Brought to you by{" "}
                   <a
                     href="https://www.godwins.site/"
                     target="_blank"
-                    className="font-bold hover:underline"
+                    className="font-bold hover:underline whitespace-nowrap"
                     rel="noreferrer"
                   >
                     Godwins Tuyishime
@@ -87,7 +87,7 @@ export default function RootLayout({
                   <a
                     href="https://www.samuel-ou.com/"
                     target="_blank"
-                    className="font-bold hover:underline"
+                    className="font-bold hover:underline whitespace-nowrap"
                     rel="noreferrer"
                   >
                     Samuel Ou
