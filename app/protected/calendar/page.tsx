@@ -175,7 +175,9 @@ export default function Calendar({ searchParams }: { searchParams: Message }) {
     // Return the formatted time string
     return `${hour}:${minutes} ${ampm}`;
   };
-
+  const capitalizeFirstLetter = (str: string) => {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  };
   return (
     <div className="flex flex-col gap-10">
       <FullCalendar
@@ -229,7 +231,7 @@ export default function Calendar({ searchParams }: { searchParams: Message }) {
                               </section> */}
                               <section>
                                 <h3 className="flex gap-3 scroll-m-20 text-2xl font-semibold tracking-tight">
-                                  <p>{event.title}</p>
+                                  <p>{capitalizeFirstLetter(event.title)}</p>
                                   <span className="flex text-center items-center relative rounded bg-muted px-[0.4rem] py-[0.1rem] font-mono text-sm font-semibold">
                                     {event.type.toUpperCase()}{" "}
                                   </span>
@@ -244,7 +246,7 @@ export default function Calendar({ searchParams }: { searchParams: Message }) {
                     </section>
                     <section
                       id="timed-events"
-                      className="border-t-2 border-black/60 pt-2 mt-2 gap-y-2"
+                      className="border-t-2 border-gray-500 pt-2 mt-2 gap-y-2"
                     >
                       {selectedDateEvents
                         .filter((event: any) => !event.all_day)
@@ -264,7 +266,7 @@ export default function Calendar({ searchParams }: { searchParams: Message }) {
                             </section>
                             <section>
                               <h3 className="flex gap-3 scroll-m-20 text-2xl font-semibold tracking-tight">
-                                <p>{event.title}</p>
+                                <p>{capitalizeFirstLetter(event.title)}</p>
                                 <span className="flex text-center items-center relative rounded bg-muted px-[0.4rem] py-[0.1rem] font-mono text-sm font-semibold">
                                   {event.type.toUpperCase()}{" "}
                                 </span>

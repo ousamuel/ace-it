@@ -23,7 +23,7 @@ export default async function Waitlist({
   }
 
   return (
-    <div className="flex-1 w-full flex flex-col gap-12 text-center items-center px-3">
+    <div className="my-20 flex-1 w-full flex flex-col gap-12 text-center items-center px-3">
       <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
         Thanks for joining our waitlist!
       </h1>
