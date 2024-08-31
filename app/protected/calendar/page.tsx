@@ -232,6 +232,7 @@ export default function Calendar({ searchParams }: { searchParams: Message }) {
           user_uid: user.id,
         },
       ]);
+      setIsAddingEvent(false)
       setIsDialogOpen(false);
     }
   };
@@ -301,7 +302,7 @@ export default function Calendar({ searchParams }: { searchParams: Message }) {
             </DialogDescription>
           </DialogHeader>
 
-          <div className="px-2 max-h-[60vh] overflow-auto flex flex-col gap-4 ">
+          <div className="px-2 max-h-[60h] overflow-auto flex flex-col gap-4 ">
             {!isAddingEvent && !isEditingEvent && (
               <>
                 {selectedDateEvents.length > 0 ? (
@@ -310,7 +311,7 @@ export default function Calendar({ searchParams }: { searchParams: Message }) {
                       <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
                         All Day Events
                       </h4>
-                      <div className="flex gap-x-8 flex-col sm:flex-row gap-2">
+                      <div className="flex gap-x-8 flex-col sm:flex-row gap-2 justify-center">
                         {selectedDateEvents
                           .filter((event: any) => event.all_day)
                           .map((event: any, i: number) => (
@@ -386,7 +387,7 @@ export default function Calendar({ searchParams }: { searchParams: Message }) {
                       .length > 0 && (
                       <section
                         id="timed-events"
-                        className="border-t-2 border-gray-500 pt-2 mt-2 gap-y-2"
+                        className="border-t-2 border-gray-500 pt-5 mt-5 gap-y-2"
                       >
                         {selectedDateEvents
                           .filter((event: any) => !event.all_day)
