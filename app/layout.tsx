@@ -92,8 +92,9 @@ export default function RootLayout({
                   >
                     Samuel Ou
                   </a>
+                  &nbsp;&nbsp;
+                  <ThemeSwitcher />
                 </p>
-                <ThemeSwitcher />
               </footer>
             </div>
           </main>
