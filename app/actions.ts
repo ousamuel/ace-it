@@ -12,6 +12,7 @@ export const addFlashcards = async (formData: FormData) => {
   const answer = formData.get("answer")?.toString();
   const notes = formData.get("notes")?.toString();
   const setName = formData.get("setName")?.toString();
+  const number = formData.get("setNumber")?.toString();
   // const setId = formData.get("setId")?.toString();
 
 
@@ -39,9 +40,15 @@ export const addFlashcards = async (formData: FormData) => {
 
   const response = await fetch(apiUrl, {
     method: "POST",
-    body: notes,
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      notes: notes,
+      flashcardNumber: number,
+    }),
   });
-
+  
   if (!response.ok) {
     return { error: "Failed to generate flashcards" };
   }
