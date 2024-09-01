@@ -21,6 +21,16 @@ export default function GenerateFlashcards({ searchParams }: { searchParams: Mes
     const [number, setNumber] = useState("");
 
     const [flashcards, setFlashcards] = useState<any[]>([]);
+    const [flipped, setFlipped] = useState<boolean[]>([]);
+
+    const handleCardClick = (id: number) => {
+        setFlipped((prev) => {
+            const newFlipped = [...prev];
+            newFlipped[id] = !newFlipped[id];
+            return newFlipped;
+        });
+      };
+
 
     useEffect(() => {
         const fetchUserFlashcards = async () => {
@@ -66,6 +76,7 @@ export default function GenerateFlashcards({ searchParams }: { searchParams: Mes
           router.push("/protected/flashcards/generate");
         }
       };
+
 
     return (
         <div className="flex flex-col gap-12 text-center">
@@ -118,20 +129,38 @@ export default function GenerateFlashcards({ searchParams }: { searchParams: Mes
                     <FormMessage message={searchParams} />
                 </div>
             </form>
-            {flashcards.length > 0 && (
-                <div>
-                    <h4 className="text-xl font-semibold">Your Flashcards</h4>
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
-                        {flashcards.map((flashcard, i) => (
-                            <Flashcard
-                                key={i}
-                                question={flashcard.question}
-                                answer={flashcard.answer}
-                            />
-                        ))}
+            {flashcards.map((flashcard, i) => (
+                <div
+                    key={i}
+                    onClick={() => handleCardClick(i)}
+                    className="relative w-full h-48 rounded-lg shadow-lg cursor-pointer border border-green-500/20"
+                    style={{ perspective: "1000px" }}
+                >
+                    <div
+                        className={`relative w-full h-full text-center transition-transform duration-500 transform-style-3d ${
+                            flipped[i] ? "rotate-y-180" : ""
+                        }`}
+                    >
+                        <div
+                            className="absolute inset-0 flex items-center justify-center bg-black rounded-lg"
+                            style={{ backfaceVisibility: "hidden" }}
+                        >
+                            question
+                            {/* <p className="text-lg font-bold text-white">{flashcard.question}</p> */}
+                        </div>
+                        <div
+                            className="absolute inset-0 flex items-center justify-center bg-gray-200 rounded-lg"
+                            style={{
+                                transform: "rotateY(180deg)",
+                                backfaceVisibility: "hidden",
+                            }}
+                        >
+                            answer
+                            {/* <p className="text-lg font-bold">{flashcard.answer}</p> */}
+                        </div>
                     </div>
                 </div>
-        )}
+            ))}
         </div>
     );
 }
