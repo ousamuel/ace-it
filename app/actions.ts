@@ -14,9 +14,6 @@ export const addFlashcards = async (formData: FormData) => {
   const setName = formData.get("setName")?.toString();
   const number = formData.get("setNumber")?.toString();
 
-
-
-
   if (!notes) {
     return { error: "Notes are required to generate flashcards" };
   }
@@ -47,7 +44,7 @@ export const addFlashcards = async (formData: FormData) => {
       flashcardNumber: number,
     }),
   });
-  
+
   if (!response.ok) {
     return { error: "Failed to generate flashcards" };
   }
@@ -55,25 +52,23 @@ export const addFlashcards = async (formData: FormData) => {
   const flashcards = await response.json();
 
   // Save flashcards to Supabase
-  const { error:flashcardsError } = await supabase.from("flashcards").insert(
+  const { error: flashcardsError } = await supabase.from("flashcards").insert(
     flashcards.map((card: any) => ({
       question: card.front,
       answer: card.back,
       user_uid: user.id,
-      set_name: setName
+      set_name: setName,
       // setId: setId
     }))
   );
 
   // Save set to Supabase
-  const { error:setError } = await supabase.from("flashcard_set").insert({
-      notes,
-      set_name: setName,
-      user_uid: user.id
-      }
-  );
-  
-  
+  const { error: setError } = await supabase.from("flashcard_set").insert({
+    notes,
+    set_name: setName,
+    user_uid: user.id,
+  });
+
   if (flashcardsError) {
     return encodedRedirect(
       "error",
@@ -86,7 +81,7 @@ export const addFlashcards = async (formData: FormData) => {
     return encodedRedirect(
       "error",
       "/verified/flashcards/generate",
-      error.message
+      setError.message
     );
   }
 
@@ -309,5 +304,3 @@ export const signOutAction = async () => {
   await supabase.auth.signOut();
   return redirect("/");
 };
-
-
