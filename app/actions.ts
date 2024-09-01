@@ -69,14 +69,14 @@ export const addFlashcards = async (formData: FormData) => {
   if (error) {
     return encodedRedirect(
       "error",
-      "/protected/flashcards/generate",
+      "/verified/flashcards/generate",
       error.message
     );
   }
 
   return encodedRedirect(
     "success",
-    "/protected/flashcards/generate",
+    "/verified/flashcards/generate",
     "Flashcards generated and saved successfully!"
   );
 };
@@ -146,12 +146,12 @@ export const addEventAction = async (formData: FormData) => {
 
   if (error) {
     console.error(error.code + " " + error.message);
-    return encodedRedirect("error", "/protected/calendar", error.message);
+    return encodedRedirect("error", "/verified/calendar", error.message);
   }
 
   return encodedRedirect(
     "success",
-    "/protected/calendar",
+    "/verified/calendar",
     "Event added successfully"
   );
 };
@@ -189,12 +189,12 @@ export const signUpAction = async (formData: FormData) => {
     //   "Thanks for signing up! Please check your email for a verification link.",
     // );
 
-    // return redirect("/protected");
+    // return redirect("/verified");
     // changed this line to redirect b/c no need for verification
     // too hassling to do email verification b/c supabase only allows for 4 every hour
     // if app were to scale large enough + paid service, then I can add custom aws SMTP and renable email verification for safety
     return redirect("/waitlist");
-    // change back to /protected once site is actually ready and no more waitlist
+    // change back to /verified once site is actually ready and no more waitlist
   }
 };
 
@@ -212,9 +212,9 @@ export const signInAction = async (formData: FormData) => {
     return encodedRedirect("error", "/sign-in", error.message);
   }
 
-  // return redirect("/protected");
+  // return redirect("/verified");
   return redirect("/waitlist");
-  // change back to /protected once site is actually ready and no more waitlist
+  // change back to /verified once site is actually ready and no more waitlist
 };
 
 export const forgotPasswordAction = async (formData: FormData) => {
@@ -228,7 +228,7 @@ export const forgotPasswordAction = async (formData: FormData) => {
   }
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${origin}/auth/callback?redirect_to=/protected/reset-password`,
+    redirectTo: `${origin}/auth/callback?redirect_to=/verified/reset-password`,
   });
 
   if (error) {
@@ -260,7 +260,7 @@ export const resetPasswordAction = async (formData: FormData) => {
   if (!password || !confirmPassword) {
     encodedRedirect(
       "error",
-      "/protected/reset-password",
+      "/verified/reset-password",
       "Password and confirm password are required"
     );
   }
@@ -268,7 +268,7 @@ export const resetPasswordAction = async (formData: FormData) => {
   if (password !== confirmPassword) {
     encodedRedirect(
       "error",
-      "/protected/reset-password",
+      "/verified/reset-password",
       "Passwords do not match"
     );
   }
@@ -280,12 +280,12 @@ export const resetPasswordAction = async (formData: FormData) => {
   if (error) {
     encodedRedirect(
       "error",
-      "/protected/reset-password",
+      "/verified/reset-password",
       "Password update failed"
     );
   }
 
-  encodedRedirect("success", "/protected/reset-password", "Password updated");
+  encodedRedirect("success", "/verified/reset-password", "Password updated");
 };
 
 export const signOutAction = async () => {

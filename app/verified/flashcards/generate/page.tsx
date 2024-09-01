@@ -11,7 +11,16 @@ import { redirect } from "next/navigation";
 import { Message } from "@/components/form-message";
 import { useRouter } from "next/navigation";
 import { Label } from "@/components/ui/label";
-
+import Link from "next/link";
+import { ContentLayout } from "@/components/admin-panel/content-layout";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 import {
     Box,
     Stack,
@@ -60,7 +69,22 @@ export default function GenerateFlashcards({ searchParams }: { searchParams: Mes
 
 
     return (
-        <div className="flex flex-col gap-5 text-center">
+      
+         <ContentLayout title="Flashcards">
+         <Breadcrumb>
+           <BreadcrumbList>
+             <BreadcrumbItem>
+               <BreadcrumbLink asChild>
+                 <Link href="/">Home</Link>
+               </BreadcrumbLink>
+             </BreadcrumbItem>
+             <BreadcrumbSeparator />
+             <BreadcrumbItem>
+               <BreadcrumbPage>Flashcards</BreadcrumbPage>
+             </BreadcrumbItem>
+           </BreadcrumbList>
+         </Breadcrumb>
+         <div className="flex flex-col gap-5 text-center">
             <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl">
                 Generate Flashcards
             </h1>
@@ -116,5 +140,6 @@ export default function GenerateFlashcards({ searchParams }: { searchParams: Mes
             </h3>
                 <Flashcard/>
         </div>
+       </ContentLayout>
     );
 }

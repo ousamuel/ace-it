@@ -11,7 +11,16 @@ import { SubmitButton } from "@/components/submit-button";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-
+import Link from "next/link";
+import { ContentLayout } from "@/components/admin-panel/content-layout";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 import {
   Dialog,
   DialogContent,
@@ -409,280 +418,296 @@ export default function Calendar({ searchParams }: { searchParams: Message }) {
     );
   };
   return (
-    <div className="flex flex-col gap-2 w-full">
-      <h2
-        className=" border-b pb-2 text-3xl  
+    <ContentLayout title="Calendar">
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild>
+              <Link href="/">Home</Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>Calendar</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+      <div className="flex flex-col gap-2 w-full">
+        <h2
+          className=" border-b pb-2 text-3xl  
       text-center font-semibold tracking-tight first:mt-0"
-      >
-        My Calendar
-      </h2>{" "}
-      <Button
-        className="mb-2"
-        onClick={() => {
-          setIsDialogOpen(true);
-          setPinnedOpen(true);
-        }}
-      >
-        View All Pinned Events
-      </Button>
-      {isLoading ? (
-        <div className="space-y-10">
-          <Skeleton className="h-10 w-full" />
-          <Skeleton className="h-10 w-full" />
-          <Skeleton className="h-10 w-full" />
-          <Skeleton className="h-10 w-full" />
-          <Skeleton className="h-10 w-full" />
-        </div>
-      ) : (
-        <FullCalendar
-          height="auto"
-          plugins={[dayGridPlugin, interactionPlugin]}
-          // plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
-          initialView="dayGridMonth"
-          events={events}
-          selectable={true}
-          // headerToolbar={{
-          //   left: "prev,next today",
-          //   center: "title",
-          //   right: "dayGridMonth,timeGridWeek,timeGridDay, timeGridYear",
-          // }}
-          dateClick={handleDateClick}
-        />
-      )}
-      <Dialog
-        open={isDialogOpen}
-        onOpenChange={(open) => {
-          if (!open) {
-            setIsAddingEvent(false);
-            setIsEditingEvent(false);
-            setPinnedOpen(false);
-            setSelectedDate("");
-            resetForm();
-          }
-          setIsDialogOpen(open);
-        }}
-      >
-        <DialogContent>
-          <DialogHeader className="border-b pb-2">
-            <DialogTitle>
-              <p className="scroll-m-20 text-3xl font-semibold tracking-tight first:mt-0">
-                {/* {!pinnedOpen } */}
-                {/* {selectedDate?.substring(5, 7)}/{selectedDate?.substring(8, 10)}
+        >
+          My Calendar
+        </h2>{" "}
+        <Button
+          className="mb-2"
+          onClick={() => {
+            setIsDialogOpen(true);
+            setPinnedOpen(true);
+          }}
+        >
+          View All Pinned Events
+        </Button>
+        {isLoading ? (
+          <div className="space-y-10">
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+          </div>
+        ) : (
+          <FullCalendar
+            height="auto"
+            plugins={[dayGridPlugin, interactionPlugin]}
+            // plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
+            initialView="dayGridMonth"
+            events={events}
+            selectable={true}
+            // headerToolbar={{
+            //   left: "prev,next today",
+            //   center: "title",
+            //   right: "dayGridMonth,timeGridWeek,timeGridDay, timeGridYear",
+            // }}
+            dateClick={handleDateClick}
+          />
+        )}
+        <Dialog
+          open={isDialogOpen}
+          onOpenChange={(open) => {
+            if (!open) {
+              setIsAddingEvent(false);
+              setIsEditingEvent(false);
+              setPinnedOpen(false);
+              setSelectedDate("");
+              resetForm();
+            }
+            setIsDialogOpen(open);
+          }}
+        >
+          <DialogContent>
+            <DialogHeader className="border-b pb-2">
+              <DialogTitle>
+                <p className="scroll-m-20 text-3xl font-semibold tracking-tight first:mt-0">
+                  {/* {!pinnedOpen } */}
+                  {/* {selectedDate?.substring(5, 7)}/{selectedDate?.substring(8, 10)}
                 /{selectedDate?.substring(0, 4)} */}
-                {selectedDate
-                  ? `${selectedDate?.substring(5, 7)} /
+                  {selectedDate
+                    ? `${selectedDate?.substring(5, 7)} /
                     ${selectedDate?.substring(8, 10)} /
                     ${selectedDate?.substring(0, 4)}`
-                  : "Pinned Events"}
-              </p>
-            </DialogTitle>
-            <DialogDescription>
-              {isAddingEvent
-                ? "Add a new event for this date."
-                : isEditingEvent && `Currently editing`}
-            </DialogDescription>
-          </DialogHeader>
+                    : "Pinned Events"}
+                </p>
+              </DialogTitle>
+              <DialogDescription>
+                {isAddingEvent
+                  ? "Add a new event for this date."
+                  : isEditingEvent && `Currently editing`}
+              </DialogDescription>
+            </DialogHeader>
 
-          <div className="px-2 max-h-[60h] overflow-auto flex flex-col gap-4 ">
-            {!isAddingEvent && !isEditingEvent && !pinnedOpen && (
-              <>
-                {selectedDateEvents.length > 0 ? (
-                  <div>
-                    {selectedDateEvents.filter((event: any) => event.all_day)
-                      .length > 0 && (
-                      <section id="all-day-events">
-                        <h4 className="scroll-m-20 text-xl text-center font-semibold tracking-tight">
-                          All Day Events
-                        </h4>
-                        {selectedDateEvents
-                          .filter((event: any) => event.all_day)
-                          .map((event: any, i: number) => (
-                            <EventSection event={event} i={i} key={i} />
-                          ))}
-                      </section>
-                    )}
-                    {selectedDateEvents.filter((event: any) => !event.all_day)
-                      .length > 0 && (
-                      <section
-                        id="timed-events"
-                        className={`${
-                          selectedDateEvents.filter(
-                            (event: any) => event.all_day
-                          ).length > 0 && "border-t-2 border-gray-500 pt-5 mt-5"
-                        } gap-y-2`}
+            <div className="px-2 max-h-[60h] overflow-auto flex flex-col gap-4 ">
+              {!isAddingEvent && !isEditingEvent && !pinnedOpen && (
+                <>
+                  {selectedDateEvents.length > 0 ? (
+                    <div>
+                      {selectedDateEvents.filter((event: any) => event.all_day)
+                        .length > 0 && (
+                        <section id="all-day-events">
+                          <h4 className="scroll-m-20 text-xl text-center font-semibold tracking-tight">
+                            All Day Events
+                          </h4>
+                          {selectedDateEvents
+                            .filter((event: any) => event.all_day)
+                            .map((event: any, i: number) => (
+                              <EventSection event={event} i={i} key={i} />
+                            ))}
+                        </section>
+                      )}
+                      {selectedDateEvents.filter((event: any) => !event.all_day)
+                        .length > 0 && (
+                        <section
+                          id="timed-events"
+                          className={`${
+                            selectedDateEvents.filter(
+                              (event: any) => event.all_day
+                            ).length > 0 &&
+                            "border-t-2 border-gray-500 pt-5 mt-5"
+                          } gap-y-2`}
+                        >
+                          {selectedDateEvents
+                            .filter((event: any) => !event.all_day)
+                            .map((event: any, i: number) => (
+                              <EventSection event={event} i={i} key={i} />
+                            ))}
+                        </section>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="flex flex-col gap-4">
+                      <p>No events for this date. You can add one below.</p>
+                      <Button
+                        className=""
+                        onClick={() => {
+                          setIsAddingEvent(true);
+                          resetForm();
+                        }}
                       >
-                        {selectedDateEvents
-                          .filter((event: any) => !event.all_day)
-                          .map((event: any, i: number) => (
-                            <EventSection event={event} i={i} key={i} />
-                          ))}
-                      </section>
-                    )}
-                  </div>
-                ) : (
-                  <div className="flex flex-col gap-4">
-                    <p>No events for this date. You can add one below.</p>
-                    <Button
-                      className=""
-                      onClick={() => {
-                        setIsAddingEvent(true);
-                        resetForm();
-                      }}
-                    >
-                      Add Event
-                    </Button>
-                  </div>
-                )}
-              </>
-            )}
+                        Add Event
+                      </Button>
+                    </div>
+                  )}
+                </>
+              )}
 
-            {(isAddingEvent || isEditingEvent) && (
-              <form
-                onSubmit={isAddingEvent ? addEventAction : editEventAction}
-                className="flex flex-col gap-4"
-              >
-                <div className="flex flex-col md:flex-row gap-4">
-                  <section className="flex flex-1 flex-col gap-4">
-                    <Label htmlFor="title">Title</Label>
-                    <Input
-                      type="text"
-                      name="title"
-                      placeholder="E.G. English Exam"
-                      value={formData.title}
-                      onChange={handleFormValueChange}
-                    />
+              {(isAddingEvent || isEditingEvent) && (
+                <form
+                  onSubmit={isAddingEvent ? addEventAction : editEventAction}
+                  className="flex flex-col gap-4"
+                >
+                  <div className="flex flex-col md:flex-row gap-4">
+                    <section className="flex flex-1 flex-col gap-4">
+                      <Label htmlFor="title">Title</Label>
+                      <Input
+                        type="text"
+                        name="title"
+                        placeholder="E.G. English Exam"
+                        value={formData.title}
+                        onChange={handleFormValueChange}
+                      />
 
-                    <Label htmlFor="description">Description</Label>
-                    <Textarea
-                      name="description"
-                      placeholder="Details about the event"
-                      className="resize-none"
-                      value={formData.description}
-                      onChange={handleFormValueChange}
-                    />
-                  </section>
-
-                  <section className="flex flex-1 flex-col gap-4 md:max-w-md">
-                    <section className="flex gap-4">
-                      <div className="flex flex-col gap-4">
-                        <Label
-                          htmlFor="time"
-                          className={isAllDay && "text-gray-400"}
-                        >
-                          Time Start
-                        </Label>
-                        <Input
-                          disabled={isAllDay}
-                          type="time"
-                          name="timeStart"
-                          value={formData.timeStart}
-                          onChange={handleFormValueChange}
-                        />
-                      </div>
-                      <div className="flex flex-col gap-4">
-                        <Label
-                          htmlFor="time"
-                          className={isAllDay && "text-gray-400"}
-                        >
-                          Time End
-                        </Label>
-                        <Input
-                          disabled={isAllDay}
-                          type="time"
-                          name="timeEnd"
-                          value={formData.timeEnd}
-                          onChange={handleFormValueChange}
-                        />
-                      </div>
-                      <div className="flex flex-col gap-4">
-                        <Label htmlFor="allDay">All Day</Label>
-                        <Checkbox
-                          id="allDay"
-                          checked={isAllDay}
-                          className="h-10 w-10"
-                          onCheckedChange={(checked) =>
-                            handleAllDayChange(checked)
-                          }
-                        />
-                      </div>
+                      <Label htmlFor="description">Description</Label>
+                      <Textarea
+                        name="description"
+                        placeholder="Details about the event"
+                        className="resize-none"
+                        value={formData.description}
+                        onChange={handleFormValueChange}
+                      />
                     </section>
-                    <section className="flex gap-4">
-                      {pinnedOpen && (
+
+                    <section className="flex flex-1 flex-col gap-4 md:max-w-md">
+                      <section className="flex gap-4">
                         <div className="flex flex-col gap-4">
                           <Label
-                            htmlFor="date"
+                            htmlFor="time"
                             className={isAllDay && "text-gray-400"}
                           >
-                            Date Start
+                            Time Start
                           </Label>
                           <Input
-                            type="date"
-                            name="date"
+                            disabled={isAllDay}
+                            type="time"
+                            name="timeStart"
                             value={formData.timeStart}
                             onChange={handleFormValueChange}
                           />
                         </div>
-                      )}
-                      <div className="flex flex-col gap-4">
-                        <Label htmlFor="type">Type</Label>
-                        <select
-                          name="type"
-                          value={formData.type}
-                          onChange={handleFormValueChange}
-                          required
-                          className="border rounded p-2"
-                        >
-                          <option value="exam">Exam</option>
-                          <option value="assignment">Assignment</option>
-                          <option value="personal">Personal</option>
-                          <option value="other">Other</option>
-                        </select>
-                      </div>
+                        <div className="flex flex-col gap-4">
+                          <Label
+                            htmlFor="time"
+                            className={isAllDay && "text-gray-400"}
+                          >
+                            Time End
+                          </Label>
+                          <Input
+                            disabled={isAllDay}
+                            type="time"
+                            name="timeEnd"
+                            value={formData.timeEnd}
+                            onChange={handleFormValueChange}
+                          />
+                        </div>
+                        <div className="flex flex-col gap-4">
+                          <Label htmlFor="allDay">All Day</Label>
+                          <Checkbox
+                            id="allDay"
+                            checked={isAllDay}
+                            className="h-10 w-10"
+                            onCheckedChange={(checked) =>
+                              handleAllDayChange(checked)
+                            }
+                          />
+                        </div>
+                      </section>
+                      <section className="flex gap-4">
+                        {pinnedOpen && (
+                          <div className="flex flex-col gap-4">
+                            <Label
+                              htmlFor="date"
+                              className={isAllDay && "text-gray-400"}
+                            >
+                              Date Start
+                            </Label>
+                            <Input
+                              type="date"
+                              name="date"
+                              value={formData.timeStart}
+                              onChange={handleFormValueChange}
+                            />
+                          </div>
+                        )}
+                        <div className="flex flex-col gap-4">
+                          <Label htmlFor="type">Type</Label>
+                          <select
+                            name="type"
+                            value={formData.type}
+                            onChange={handleFormValueChange}
+                            required
+                            className="border rounded p-2"
+                          >
+                            <option value="exam">Exam</option>
+                            <option value="assignment">Assignment</option>
+                            <option value="personal">Personal</option>
+                            <option value="other">Other</option>
+                          </select>
+                        </div>
+                      </section>
                     </section>
-                  </section>
-                </div>
+                  </div>
 
-                <SubmitButton type="submit" pendingText="Saving Event...">
-                  Save
-                </SubmitButton>
-              </form>
-            )}
-            {pinnedOpen &&
-              pinnedEvents.map((event: any, i: number) => (
-                <EventSection event={event} i={i} key={i} />
-              ))}
-          </div>
-
-          <DialogFooter className="border-t pt-2">
-            {!isAddingEvent &&
-              !isEditingEvent &&
-              selectedDateEvents.length > 0 && (
-                <Button
-                  className=""
-                  onClick={() => {
-                    setIsAddingEvent(true);
-                    setPinnedOpen(false);
-                    resetForm();
-                  }}
-                >
-                  Add New Event
-                </Button>
+                  <SubmitButton type="submit" pendingText="Saving Event...">
+                    Save
+                  </SubmitButton>
+                </form>
               )}
-            <Button
-              onClick={() => {
-                setIsDialogOpen(false);
-                setIsAddingEvent(false);
-                setIsEditingEvent(false);
-                setPinnedOpen(false);
-                setSelectedDate("");
-                resetForm();
-              }}
-            >
-              Close
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </div>
+              {pinnedOpen &&
+                pinnedEvents.map((event: any, i: number) => (
+                  <EventSection event={event} i={i} key={i} />
+                ))}
+            </div>
+
+            <DialogFooter className="border-t pt-2">
+              {!isAddingEvent &&
+                !isEditingEvent &&
+                selectedDateEvents.length > 0 && (
+                  <Button
+                    className=""
+                    onClick={() => {
+                      setIsAddingEvent(true);
+                      setPinnedOpen(false);
+                      resetForm();
+                    }}
+                  >
+                    Add New Event
+                  </Button>
+                )}
+              <Button
+                onClick={() => {
+                  setIsDialogOpen(false);
+                  setIsAddingEvent(false);
+                  setIsEditingEvent(false);
+                  setPinnedOpen(false);
+                  setSelectedDate("");
+                  resetForm();
+                }}
+              >
+                Close
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
+    </ContentLayout>
   );
 }

@@ -4,11 +4,25 @@ import SignUpUserSteps from "@/components/tutorial/sign-up-user-steps";
 import { hasEnvVars } from "@/utils/supabase/check-env-vars";
 import Head from "next/head";
 import GoogleAnalytics from "@/components/analytics";
+import Link from "next/link";
+import { EnvVarWarning } from "@/components/env-var-warning";
+import HeaderAuth from "@/components/header-auth";
 
 export default async function Index() {
   return (
     <div className="my-20 w-full p-[1px] from-transparent via-foreground/10 to-transparent my-8">
       {/* bg-gradient-to-r  */}
+      <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
+        <div className="w-full max-w-5xl flex justify-between items-center p-3 px-5 text-3xl">
+          <div className="flex gap-5 items-center font-semibold">
+            <Link href="/" className="flex flex-row gap-1">
+              <h1>ACE</h1>
+              <h1 className="text-green-500">IT</h1>
+            </Link>
+          </div>
+          {!hasEnvVars ? <EnvVarWarning /> : <HeaderAuth />}
+        </div>
+      </nav>
       <Hero />
       <div className="flex flex-col gap-5 justify-center items-center pt-0">
         <p className="text-4xl">Features</p>
