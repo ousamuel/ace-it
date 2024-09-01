@@ -28,9 +28,13 @@ export default async function Layout({
   if (!user) {
     return redirect("/sign-in");
   }
+  // const approvedEmails = ;
   if (
-    user.email != "gtuyishime02@gmail.com" &&
-    user.email != "coinchip167@gmail.com"
+    ![
+      "gtuyishime02@gmail.com",
+      "coinchip167@gmail.com",
+      "angela.wu808@gmail.com",
+    ].includes(user.email || "")
   ) {
     return redirect("/waitlist");
   }
