@@ -1,25 +1,15 @@
-import FetchDataSteps from "@/components/tutorial/fetch-data-steps";
 import { createClient } from "@/utils/supabase/server";
-import { InfoIcon } from "lucide-react";
 import { redirect } from "next/navigation";
-
-export default async function ProtectedPage() {
+export default async function ProtectedRedirect() {
   const supabase = createClient();
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) {
-    return redirect("/sign-in");
+  if (user) {
+    return redirect("/verified");
+  } else {
+    return redirect("/");
   }
-
-  return (
-    <div className="flex-1 w-full flex flex-col gap-12">
-      <div className="flex flex-col gap-2 items-start">
-        <h2 className="font-bold text-2xl mb-4">My Study Zone</h2>
-        <h4>coming soon!</h4>
-       </div>
-    </div>
-  );
 }
