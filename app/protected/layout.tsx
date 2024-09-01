@@ -22,5 +22,5 @@ export default async function Layout({
     return redirect("/waitlist");
   }
 
-  return <div className='flex justify-center'>{children}</div>;
+  return <div className="flex justify-center w-full">{children}</div>;
 }

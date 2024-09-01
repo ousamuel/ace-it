@@ -91,3 +91,8 @@
   background-color: rgb(255, 207, 207);
   color: red;
 }
+
+.fc-col-header-cell {
+  color: black;
+}
+
