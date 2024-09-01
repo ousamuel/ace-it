@@ -64,6 +64,12 @@ export default function RootLayout({
                       <h1>ACE</h1>
                       <h1 className="text-green-500">IT</h1>
                     </Link>
+                    <Link href="/protected/calendar">
+                      <h4>Calendar</h4>
+                    </Link>
+                    <Link href="/protected/flashcards/generate">
+                      <h4>Flashcards</h4>
+                    </Link>
                   </div>
                   {!hasEnvVars ? <EnvVarWarning /> : <HeaderAuth />}
                 </div>
