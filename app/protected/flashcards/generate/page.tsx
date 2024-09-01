@@ -71,7 +71,7 @@ export default function GenerateFlashcards({ searchParams }: { searchParams: Mes
             <form className="flex flex-col w-full max-w-md p-4 gap-2 mx-auto border border-green-500/20 rounded-lg" 
                 onSubmit={handleSubmit}>
                 <div className="flex flex-col gap-2 mt-8 ">
-                    <Label htmlFor="setName">Flashcard Name</Label>
+                    <Label htmlFor="setName">Flashcard Set Name</Label>
                     <Input
                         type="text"
                         id="setName"
@@ -114,8 +114,7 @@ export default function GenerateFlashcards({ searchParams }: { searchParams: Mes
             <h3 className="text-2xl font-semibold tracking-tight">
                 My Flashcards
             </h3>
-            <Flashcard/>
-
+                <Flashcard/>
         </div>
     );
 }
