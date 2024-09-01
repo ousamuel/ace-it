@@ -110,7 +110,9 @@ export default function GenerateFlashcards({ searchParams }: { searchParams: Mes
                     <FormMessage message={searchParams} />
                 </div>
             </form>
-
+            <h3 className="text-2xl font-semibold tracking-tight">
+                My Flashcards
+            </h3>
             <Flashcard/>
 
         </div>
