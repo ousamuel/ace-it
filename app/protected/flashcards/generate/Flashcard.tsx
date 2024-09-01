@@ -55,7 +55,7 @@ export default function Flashcard() {
               <Box
                 sx={{
                     borderRadius:"20px",
-                    border:"0.5px rgba(34, 197, 94, 0.2) solid",
+                    border:"1px rgba(34, 197, 94, 0.5) solid",
                     perspective: "1000px",
                     "& > div": {
                     transition: "transform 0.6s",
@@ -88,10 +88,10 @@ export default function Flashcard() {
               >
                   <div>
                       <div>
-                          <p className="text-lg font-bold text-white">{flashcard.question}</p>
+                          <p className="text-lg font-bold">{flashcard.question}</p>
                       </div>
                       <div>
-                          <p className="text-lg font-bold text-white">{flashcard.answer}</p>
+                          <p className="text-lg font-bold">{flashcard.answer}</p>
                       </div>
                   </div>
               </Box>
