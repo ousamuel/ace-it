@@ -60,7 +60,7 @@ export default function GenerateFlashcards({ searchParams }: { searchParams: Mes
 
 
     return (
-        <div className="flex flex-col gap-12 text-center">
+        <div className="flex flex-col gap-5 text-center">
             <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl">
                 Generate Flashcards
             </h1>
@@ -68,8 +68,9 @@ export default function GenerateFlashcards({ searchParams }: { searchParams: Mes
                 Create custom flashcards to enhance your studying!
             </h3>
 
-            <form className="flex flex-col w-full max-w-md p-4 gap-2 mx-auto" onSubmit={handleSubmit}>
-                <div className="flex flex-col gap-4 mt-8">
+            <form className="flex flex-col w-full max-w-md p-4 gap-2 mx-auto border border-green-500/20 rounded-lg" 
+                onSubmit={handleSubmit}>
+                <div className="flex flex-col gap-2 mt-8 ">
                     <Label htmlFor="setName">Flashcard Name</Label>
                     <Input
                         type="text"
