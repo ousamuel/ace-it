@@ -67,7 +67,11 @@ export const addFlashcards = async (formData: FormData) => {
   );
 
   if (error) {
-    return encodedRedirect("error", "/protected/flashcards/", error.message);
+    return encodedRedirect(
+      "error",
+      "/protected/flashcards/generate",
+      error.message
+    );
   }
 
   return encodedRedirect(
@@ -142,7 +146,7 @@ export const addEventAction = async (formData: FormData) => {
 
   if (error) {
     console.error(error.code + " " + error.message);
-    return encodedRedirect("error", "/calendar", error.message);
+    return encodedRedirect("error", "/protected/calendar", error.message);
   }
 
   return encodedRedirect(
@@ -287,5 +291,7 @@ export const resetPasswordAction = async (formData: FormData) => {
 export const signOutAction = async () => {
   const supabase = createClient();
   await supabase.auth.signOut();
-  return redirect("/sign-in");
+  return redirect("/");
 };
+
+
