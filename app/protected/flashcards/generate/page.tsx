@@ -37,6 +37,7 @@ export default function GenerateFlashcards({ searchParams }: { searchParams: Mes
     const [setName, setSetName] = useState("");
     const [notes, setNotes] = useState("");
     const [number, setNumber] = useState("");
+    
 
     const handleSubmit = async () => {
     // Generate a unique set ID
