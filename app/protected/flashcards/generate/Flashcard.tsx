@@ -1,22 +1,46 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createClient } from "@/utils/supabase/client";
+import { redirect } from "next/navigation";
+
 import { Box } from "@mui/material";
 
-interface FlashcardProps {
-  question: string;
-  answer: string;
-}
-
-export default function Flashcard({ question, answer }: FlashcardProps) {
+export default function Flashcard() {
+  const supabase = createClient();
   const [flashcards, setFlashcards] = useState<any[]>([]);
   const [flipped, setFlipped] = useState<boolean[]>([]);
 
-    const handleCardClick = (id: number) => {
-        setFlipped((prev) => {
-            const newFlipped = [...prev];
-            newFlipped[id] = !newFlipped[id];
-            return newFlipped;
-        });
-      };
+  useEffect(() => {
+    const fetchUserFlashcards = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) {
+        return redirect("/sign-in");
+      }
+
+      const { data, error } = await supabase
+        .from("flashcards")
+        .select("*")
+        .eq("user_uid", user.id);
+
+      if (data) {
+        setFlashcards(data);
+      } else if (error) {
+        console.error("Error fetching flashcards:", error);
+      }
+    };
+
+    fetchUserFlashcards();
+  }, [flashcards, supabase]);
+
+  const handleCardClick = (id: number) => {
+      setFlipped((prev) => {
+          const newFlipped = [...prev];
+          newFlipped[id] = !newFlipped[id];
+          return newFlipped;
+      });
+    };
 
   return (
     <div>
@@ -24,6 +48,7 @@ export default function Flashcard({ question, answer }: FlashcardProps) {
         <div
             key={i}
             onClick={() => handleCardClick(i)}
+            className="py-5"
             
         >
             <div>

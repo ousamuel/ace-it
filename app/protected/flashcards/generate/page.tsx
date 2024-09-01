@@ -29,6 +29,7 @@ import {
     DialogContentText,
     DialogActions,
   } from "@mui/material";
+import Flashcard from "./Flashcard";
 
 export default function GenerateFlashcards({ searchParams }: { searchParams: Message }) {
     const supabase = createClient();
@@ -37,62 +38,25 @@ export default function GenerateFlashcards({ searchParams }: { searchParams: Mes
     const [notes, setNotes] = useState("");
     const [number, setNumber] = useState("");
 
-    const [flashcards, setFlashcards] = useState<any[]>([]);
-    const [flipped, setFlipped] = useState<boolean[]>([]);
+    const handleSubmit = async () => {
+    // Generate a unique set ID
+    // const setId = uuidv4();
 
-    const handleCardClick = (id: number) => {
-        setFlipped((prev) => {
-            const newFlipped = [...prev];
-            newFlipped[id] = !newFlipped[id];
-            return newFlipped;
-        });
-      };
-
-
-    useEffect(() => {
-        const fetchUserFlashcards = async () => {
-          const {
-            data: { user },
-          } = await supabase.auth.getUser();
-    
-          if (!user) {
-            return redirect("/sign-in");
-          }
-    
-          const { data, error } = await supabase
-            .from("flashcards")
-            .select("*")
-            .eq("user_uid", user.id);
-    
-          if (data) {
-            setFlashcards(data);
-          } else if (error) {
-            console.error("Error fetching flashcards:", error);
-          }
-        };
-    
-        fetchUserFlashcards();
-      }, [flashcards, supabase]);
-    
-      const handleSubmit = async () => {
-        // Generate a unique set ID
-        // const setId = uuidv4();
-
-        const formData = new FormData();
-        formData.append("notes", notes);
-        formData.append("setName", setName);
-        formData.append("setNumber", number);
-
-        
+    const formData = new FormData();
+    formData.append("notes", notes);
+    formData.append("setName", setName);
+    formData.append("setNumber", number);
 
     
-        const response = await addFlashcards(formData);
-        if (response?.error) {
-          console.error(response.error);
-        } else {
-          router.push("/protected/flashcards/generate");
-        }
-      };
+
+
+    const response = await addFlashcards(formData);
+    if (response?.error) {
+        console.error(response.error);
+    } else {
+        router.push("/protected/flashcards/generate");
+    }
+    };
 
 
     return (
@@ -146,92 +110,9 @@ export default function GenerateFlashcards({ searchParams }: { searchParams: Mes
                     <FormMessage message={searchParams} />
                 </div>
             </form>
-            
-            {flashcards.map((flashcard, i) => (
-               <div
-                    key={i}
-                    onClick={() => handleCardClick(i)}
-                    
-                >
-                    <div>
-                        <Box
-                        sx={{
-                            borderRadius:"20px",
-                            border:"0.5px rgba(34, 197, 94, 0.2) solid",
-                            perspective: "1000px",
-                            "& > div": {
-                            transition: "transform 0.6s",
-                            transformStyle: "preserve-3d",
-                            position: "relative",
-                            width: "100%",
-                            height: "200px",
-                            '&:hover':{boxShadow: "0 4px 8px 0 rgba(34, 197, 94, 0.2)"},
-                            transform: flipped[i]
-                                ? "rotateY(180deg)"
-                                : "rotateY(0deg)",
-                                borderRadius:"20px",
-                            },
-                            "& > div > div": {
-                            position: "absolute",
-                            borderRadius:"20px",
-                            width: "100%",
-                            height: "100%",
-                            backfaceVisibility: "hidden",
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            padding: 2,
-                            boxSizing: "border-box",
-                            },
-                            "& > div > div:nth-of-type(2)": {
-                            transform: "rotateY(180deg)",
-                            },
-                        }}
-                        >
-                            <div>
-                                <div>
-                                    <p className="text-lg font-bold text-white">{flashcard.question}</p>
-                                </div>
-                                <div>
-                                    <p className="text-lg font-bold text-white">{flashcard.answer}</p>
-                                </div>
-                            </div>
-                        </Box>
-                    </div>
-              </div>
-            ))}
 
-            {/* {flashcards.map((flashcard, i) => (
-                <div
-                    key={i}
-                    onClick={() => handleCardClick(i)}
-                    className="relative w-full h-48 rounded-lg shadow-lg cursor-pointer border hover:shadow-green-500/20 border-green-500/20"
-                    style={{ perspective: "1000px" }}
-                >
-                    <div
-                        className={`relative w-full h-full text-center transition-transform duration-500 transform ${
-                            flipped[i] ? "rotate-y-180" : ""
-                        }`}
-                        style={{ transformStyle: "preserve-3d" }}
-                    >
-                        <div
-                            className="absolute inset-0 flex items-center justify-center rounded-lg"
-                            // style={{ backfaceVisibility: "hidden" }}
-                        >
-                            <p className="text-lg font-bold text-white">{flashcard.question}</p>
-                        </div>
-                        <div
-                            className="absolute inset-0 flex items-center justify-center bg-gray-200 rounded-lg"
-                            style={{
-                                transform: "rotateY(180deg)",
-                                backfaceVisibility: "hidden",
-                            }}
-                        >
-                            <p className="text-lg font-bold">{flashcard.answer}</p>
-                        </div>
-                    </div>
-                </div>
-            ))} */}
+            <Flashcard/>
+
         </div>
     );
 }
