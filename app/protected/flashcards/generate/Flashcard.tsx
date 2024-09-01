@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Box } from "@mui/material";
 
 interface FlashcardProps {
   question: string;
@@ -6,30 +7,72 @@ interface FlashcardProps {
 }
 
 export default function Flashcard({ question, answer }: FlashcardProps) {
-  const [flipped, setFlipped] = useState<boolean>(false);
+  const [flashcards, setFlashcards] = useState<any[]>([]);
+  const [flipped, setFlipped] = useState<boolean[]>([]);
 
+    const handleCardClick = (id: number) => {
+        setFlipped((prev) => {
+            const newFlipped = [...prev];
+            newFlipped[id] = !newFlipped[id];
+            return newFlipped;
+        });
+      };
 
   return (
-    <div
-      onClick={() => setFlipped(!flipped)}
-      className="hover:shadow-zinc-800 relative w-full h-48 rounded-lg shadow-lg cursor-pointer"
-      style={{ perspective: "1000px" }}  // Added perspective to the parent
-    >
-      <div
-        className={`relative w-full h-full text-center transition-transform duration-600 transform-style-preserve-3d ${
-          flipped ? "rotate-y-180" : ""
-        }`}
-      >
-        <div className="absolute inset-0 flex items-center justify-center bg-black rounded-lg backface-hidden" style={{ backfaceVisibility: "hidden" }}>
-          <p className="text-lg font-bold ">{question}</p>
-        </div>
+    <div>
+      {flashcards.map((flashcard, i) => (
         <div
-          className="absolute inset-0 flex items-center justify-center bg-gray-200 rounded-lg backface-hidden"
-          style={{ transform: "rotateY(180deg)", backfaceVisibility: "hidden" }}
+            key={i}
+            onClick={() => handleCardClick(i)}
+            
         >
-          <p className="text-lg font-bold">{answer}</p>
+            <div>
+              <Box
+                sx={{
+                    borderRadius:"20px",
+                    border:"0.5px rgba(34, 197, 94, 0.2) solid",
+                    perspective: "1000px",
+                    "& > div": {
+                    transition: "transform 0.6s",
+                    transformStyle: "preserve-3d",
+                    position: "relative",
+                    width: "100%",
+                    height: "200px",
+                    '&:hover':{boxShadow: "0 4px 8px 0 rgba(34, 197, 94, 0.2)"},
+                    transform: flipped[i]
+                        ? "rotateY(180deg)"
+                        : "rotateY(0deg)",
+                        borderRadius:"20px",
+                    },
+                    "& > div > div": {
+                    position: "absolute",
+                    borderRadius:"20px",
+                    width: "100%",
+                    height: "100%",
+                    backfaceVisibility: "hidden",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    padding: 2,
+                    boxSizing: "border-box",
+                    },
+                    "& > div > div:nth-of-type(2)": {
+                    transform: "rotateY(180deg)",
+                    },
+                }}
+              >
+                  <div>
+                      <div>
+                          <p className="text-lg font-bold text-white">{flashcard.question}</p>
+                      </div>
+                      <div>
+                          <p className="text-lg font-bold text-white">{flashcard.answer}</p>
+                      </div>
+                  </div>
+              </Box>
         </div>
       </div>
+          ))}
     </div>
   );
 }
