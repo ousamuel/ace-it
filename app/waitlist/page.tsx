@@ -21,6 +21,12 @@ export default async function Waitlist({
   if (!user) {
     return redirect("/sign-in");
   }
+  if (
+    user.email == "gtuyishime02@gmail.com" ||
+    user.email == "coinchip167@gmail.com"
+  ) {
+    return redirect("/verified");
+  }
 
   return (
     <div className="my-20 flex-1 w-full flex flex-col gap-12 text-center items-center px-3">

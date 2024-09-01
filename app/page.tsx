@@ -10,7 +10,7 @@ import HeaderAuth from "@/components/header-auth";
 
 export default async function Index() {
   return (
-    <div className="my-20 w-full p-[1px] from-transparent via-foreground/10 to-transparent my-8">
+    <div className=" w-full p-[1px] from-transparent via-foreground/10 to-transparent">
       {/* bg-gradient-to-r  */}
       <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
         <div className="w-full max-w-5xl flex justify-between items-center p-3 px-5 text-3xl">
