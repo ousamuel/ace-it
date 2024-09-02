@@ -29,15 +29,15 @@ export default async function Layout({
     return redirect("/sign-in");
   }
   // const approvedEmails = ;
-  if (
-    ![
-      "gtuyishime02@gmail.com",
-      "coinchip167@gmail.com",
-      "angela.wu808@gmail.com",
-    ].includes(user.email || "")
-  ) {
-    return redirect("/waitlist");
-  }
+  // if (
+  //   ![
+  //     "gtuyishime02@gmail.com",
+  //     "coinchip167@gmail.com",
+  //     "angela.wu808@gmail.com",
+  //   ].includes(user.email || "")
+  // ) {
+  //   return redirect("/waitlist");
+  // }
 
   return <AdminPanelLayout>{children}</AdminPanelLayout>;
 }
