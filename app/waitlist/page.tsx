@@ -51,6 +51,16 @@ export default async function Waitlist({
       <h3 className="sm:w-3/5 scroll-m-20 text-2xl font-semibold tracking-tight">
         Our app will soon be out of development and ready to save your grades!
       </h3>
+      <button
+        className={`
+        p-2 px-3 bg-green-500 text-2xl lg:text-2xl text-white
+        border border-zinc-200 shadow-lg rounded-2xl hover:bg-green-500 
+        hover:text-white hover:text-3xl 
+        hover:shadow-xl hover:shadow-green-500/50 
+        transition-all duration-300 ease-in-out transform`}
+      >
+        <Link href="/verified/flashcards/generate">Try a Demo</Link>
+      </button>
       <form className="flex flex-col w-full max-w-md p-4 gap-2 [&>input]:mb-4">
         <div className="flex flex-col gap-2 [&>input]:mb-3 mt-8">
           <Label className="text-md text-muted-foreground" htmlFor="suggestion">
