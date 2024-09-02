@@ -60,7 +60,7 @@ export default async function RootLayout({
         >
           <main className="min-h-screen flex flex-col items-center">
             {/* <div className="flex-1 w-full flex flex-col gap-5 items-center"> */}
-            <div className="flex w-full grow px-4 lg:px-8 justify-center ">
+            <div className="flex w-full grow justify-center ">
               {children}
             </div>
             {/* </div> */}

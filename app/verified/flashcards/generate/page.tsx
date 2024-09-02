@@ -22,34 +22,37 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import {
-    Box,
-    Stack,
-    Container,
-    Typography,
-    Paper,
-    TextField,
-    Button,
-    Grid,
-    CardActionArea,
-    CardContent,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogContentText,
-    DialogActions,
-  } from "@mui/material";
+  Box,
+  Stack,
+  Container,
+  Typography,
+  Paper,
+  TextField,
+  Button,
+  Grid,
+  CardActionArea,
+  CardContent,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+} from "@mui/material";
 import Flashcard from "./Flashcard";
 import Flashcard_v2 from "./Flashcard_v2";
 
-export default function GenerateFlashcards({ searchParams }: { searchParams: Message }) {
-    const supabase = createClient();
-    const router = useRouter();
-    const [setName, setSetName] = useState("");
-    const [notes, setNotes] = useState("");
-    const [number, setNumber] = useState("");
-    
+export default function GenerateFlashcards({
+  searchParams,
+}: {
+  searchParams: Message;
+}) {
+  const supabase = createClient();
+  const router = useRouter();
+  const [setName, setSetName] = useState("");
+  const [notes, setNotes] = useState("");
+  const [number, setNumber] = useState("");
 
-    const handleSubmit = async () => {
+  const handleSubmit = async () => {
     // Generate a unique set ID
     // const setId = uuidv4();
 
@@ -58,41 +61,36 @@ export default function GenerateFlashcards({ searchParams }: { searchParams: Mes
     formData.append("setName", setName);
     formData.append("setNumber", number);
 
-    
-
-
     const response = await addFlashcards(formData);
     if (response?.error) {
-        console.error(response.error);
+      console.error(response.error);
     } else {
-        router.push("/protected/flashcards/generate");
+      router.push("/verified/flashcards/generate");
     }
-    };
+  };
 
-
-    return (
-      
-         <ContentLayout title="Flashcards">
-         <Breadcrumb>
-           <BreadcrumbList>
-             <BreadcrumbItem>
-               <BreadcrumbLink asChild>
-                 <Link href="/">Home</Link>
-               </BreadcrumbLink>
-             </BreadcrumbItem>
-             <BreadcrumbSeparator />
-             <BreadcrumbItem>
-               <BreadcrumbPage>Flashcards</BreadcrumbPage>
-             </BreadcrumbItem>
-           </BreadcrumbList>
-         </Breadcrumb>
-         <div className="flex flex-col gap-5 text-center">
-            <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl">
-                Generate Flashcards
-            </h1>
-            <h3 className="text-2xl font-semibold tracking-tight">
-                Create custom flashcards to enhance your studying!
-            </h3>
+  return (
+    <ContentLayout title="Flashcards">
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild>
+              <Link href="/">Home</Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>Flashcards</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+      <div className="flex flex-col gap-5 text-center">
+        <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl">
+          Generate Flashcards
+        </h1>
+        <h3 className="text-2xl font-semibold tracking-tight">
+          Create custom flashcards to enhance your studying!
+        </h3>
 
             <form className="flex flex-col w-full max-w-md p-4 gap-2 mx-auto border border-green-500/50 rounded-lg" 
                 onSubmit={handleSubmit}>
@@ -140,7 +138,7 @@ export default function GenerateFlashcards({ searchParams }: { searchParams: Mes
             <h3 className="text-2xl font-semibold tracking-tight">
                 My Flashcards
             </h3>
-                <Flashcard_v2/>
+                <Flashcard/>
         </div>
        </ContentLayout>
     );
