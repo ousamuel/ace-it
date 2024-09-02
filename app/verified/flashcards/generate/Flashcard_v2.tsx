@@ -203,7 +203,7 @@ export default function Flashcard_v2({ shouldFetch }: { shouldFetch: boolean }) 
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                // padding: 2,
+                padding: 2,
                 boxSizing: "border-box",
               },
               "& > div > div:nth-of-type(2)": {
