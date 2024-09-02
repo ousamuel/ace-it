@@ -38,15 +38,43 @@ export default async function Home() {
           </BreadcrumbItem> */}
         </BreadcrumbList>
       </Breadcrumb>
-      <div className="flex-1 flex flex-col gap-12 overflow-y-scroll">
-        <div className="">
-          <div className="bg-accent text-sm p-3 px-5 rounded-md text-foreground flex gap-3 items-center">
-            <InfoIcon size="16" strokeWidth={2} />
-            This is a protected page that you can only see as an authenticated
-            user
-          </div>
-        </div>
-      </div>{" "}
+      <div className="mt-6 px-2">
+        <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
+          Ace<span className="text-green-500">IT</span>: Your Ultimate Study
+          Companion
+        </h1>
+        <p className="leading-7 [&:not(:first-child)]:mt-6">
+          AceIT is designed to elevate your learning experience with a suite of
+          features tailored to help you succeed.
+        </p>
+
+        <h2 className="text-green-500 mt-10 scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0">
+          AI-Powered Flashcards
+        </h2>
+        <p className="leading-7 [&:not(:first-child)]:mt-6">
+          Enhance your learning with flashcards that adapt to your study needs.
+          AceIT's AI identifies key concepts for reinforcement, ensuring you
+          focus on what matters most.
+        </p>
+
+        <h2 className="text-green-500 mt-10 scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0">
+          Practice Exams & Calendar
+        </h2>
+        <p className="leading-7 [&:not(:first-child)]:mt-6">
+          Stay prepared with practice exams that simulate real test conditions.
+          Keep track of all your assignments and exam dates with the built-in
+          calendar, making sure you're always on top of your schedule.
+        </p>
+
+        <h2 className="text-green-500 mt-10 scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0">
+          Chatbot Interactions & Quizzing
+        </h2>
+        <p className="leading-7 [&:not(:first-child)]:mt-6">
+          Make learning interactive and fun with AceIT's chatbot. Engage in
+          quick quizzes or ask for clarifications on tough topics – all through
+          a seamless conversational interface.
+        </p>
+      </div>
     </ContentLayout>
   );
 }
