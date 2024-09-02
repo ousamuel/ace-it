@@ -51,10 +51,11 @@ export default function GenerateFlashcards({
   const [setName, setSetName] = useState("");
   const [notes, setNotes] = useState("");
   const [number, setNumber] = useState("");
+  const [shouldFetch, setShouldFetch] = useState(false);
 
-  const handleSubmit = async () => {
-    // Generate a unique set ID
-    // const setId = uuidv4();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setShouldFetch(false);
 
     const formData = new FormData();
     formData.append("notes", notes);
@@ -65,7 +66,7 @@ export default function GenerateFlashcards({
     if (response?.error) {
       console.error(response.error);
     } else {
-      router.push("/verified/flashcards/generate");
+      setShouldFetch(true);
     }
   };
 
@@ -138,7 +139,7 @@ export default function GenerateFlashcards({
             <h3 className="text-2xl font-semibold tracking-tight">
                 My Flashcards
             </h3>
-                <Flashcard_v2/>
+                <Flashcard_v2 shouldFetch={shouldFetch} />
         </div>
        </ContentLayout>
     );

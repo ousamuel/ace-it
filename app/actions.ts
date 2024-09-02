@@ -47,15 +47,18 @@ export const addFlashcards = async (formData: FormData) => {
   const flashcards = await response.json();
 
   // Save flashcards to Supabase
-  const { error: flashcardsError } = await supabase.from("flashcards").insert(
-    flashcards.map((card: any) => ({
-      question: card.front,
-      answer: card.back,
-      user_uid: user.id,
-      set_name: setName,
-      // setId: setId
-    }))
-  );
+  const { error: flashcardsError, data: flashcardsData} = await supabase
+    .from("flashcards")
+    .insert(
+      flashcards.map((card: any) => ({
+        question: card.front,
+        answer: card.back,
+        user_uid: user.id,
+        set_name: setName,
+      }))
+
+  )
+  .select();
 
   // Save set to Supabase
   const { error: setError } = await supabase.from("flashcard_set").insert({

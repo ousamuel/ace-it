@@ -5,38 +5,43 @@ import { redirect } from "next/navigation";
 import { Box, Button, Typography } from "@mui/material";
 import { toast } from "sonner";
 
-export default function Flashcard_v2() {
+export default function Flashcard_v2({ shouldFetch }: { shouldFetch: boolean }) {
   const supabase = createClient();
   const [flashcards, setFlashcards] = useState<any[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const fetchUserFlashcards = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+    if (shouldFetch) {
+      const fetchUserFlashcards = async () => {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
 
-      if (!user) {
-        return redirect("/sign-in");
-      }
+        if (!user) {
+          return redirect("/sign-in");
+        }
 
-      const { data, error } = await supabase
-        .from("flashcards")
-        .select("*")
-        .eq("user_uid", user.id);
+        const { data, error } = await supabase
+          .from("flashcards")
+          .select("*")
+          .eq("user_uid", user.id);
+        
+        setLoading(false);
 
-      if (data) {
-        setFlashcards(data);
-      } else if (error) {
-        console.error("Error fetching flashcards:", error);
-      } else {
-        toast('Flashcards generated!')
-      }
-    };
+        if (data) {
+          setFlashcards(data);
+        } else if (error) {
+          console.error("Error fetching flashcards:", error);
+        } else {
+          toast('Flashcards generated!')
+        }
+      };
 
-    fetchUserFlashcards();
-  }, [supabase]);
+      fetchUserFlashcards();
+    }
+  }, [supabase, shouldFetch]);
 
   const deleteFlashcard = async (flashcard: any) => {
     const { error } = await supabase
@@ -114,8 +119,11 @@ export default function Flashcard_v2() {
     };
   }, [flashcards]);
 
+  if (loading){
+    return <p>Flashcards loading...</p>;
+  }
   if (flashcards.length === 0) {
-    return <p>Loading flashcards...</p>;
+    return <p>No flashcards yet...</p>;
   }
 
   const currentCard = flashcards[currentIndex];
