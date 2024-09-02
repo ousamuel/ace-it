@@ -67,7 +67,7 @@ export const addFlashcards = async (formData: FormData) => {
   if (flashcardsError) {
     return encodedRedirect(
       "error",
-      "/protected/flashcards/generate",
+      "/verified/flashcards/generate",
       flashcardsError.message
     );
   }
@@ -124,45 +124,40 @@ export const addExam = async (formData: FormData) => {
   if (!response.ok) {
     return { error: "Failed to generate exam" };
   }
-
   const examQuestions = await response.json();
-
   // Save exam questions to Supabase
-  const { error: examError } = await supabase.from("exams").insert(
+  const { error: examError } = await supabase.from("mock_exams").insert(
     examQuestions.map((question: any) => ({
       question: question.question,
       answer: question.answer,
       user_uid: user.id,
       exam_name: examName,
+      options: question.options,
     }))
   );
-
   // Save exam set details to Supabase
-  const { error: setError } = await supabase.from("exam_set").insert({
-    notes,
-    exam_name: examName,
-    user_uid: user.id,
-  });
-
+  // const { error: setError } = await supabase.from("exam_set").insert({
+  //   notes,
+  //   exam_name: examName,
+  //   user_uid: user.id,
+  // });
   if (examError) {
     return encodedRedirect(
       "error",
-      "/protected/exams/generate",
+      "/verified/mock-exams",
       examError.message
     );
   }
-
-  if (setError) {
-    return encodedRedirect(
-      "error",
-      "/verified/exams/generate",
-      setError.message
-    );
-  }
-
+  // if (setError) {
+  //   return encodedRedirect(
+  //     "error",
+  //     "/verified/exams/generate",
+  //     setError.message
+  //   );
+  // }
   return encodedRedirect(
     "success",
-    "/verified/exams/generate",
+    "/verified/mock-exams",
     "Exam generated and saved successfully!"
   );
 };
