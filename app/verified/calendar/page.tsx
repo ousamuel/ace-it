@@ -239,13 +239,10 @@ export default function Calendar({ searchParams }: { searchParams: Message }) {
       console.error("Error adding event:", error);
     } else {
       toast(
-        `Event added for ${
-          selectedDate?.substring(5, 7)} /${
-          selectedDate?.substring(8, 10)} /
-          ${selectedDate?.substring(0, 4)}
-        }`,
+        `Event added on ${selectedDate?.substring(5, 7)}/${selectedDate?.substring(8, 10)}/${selectedDate?.substring(0, 4)}
+        `,
         {
-          description: `${title} ${!allDay && `from ${convertTimeTo12HourFormat(timeStart)} to ${convertTimeTo12HourFormat(timeEnd)}`}`,
+          description: `"${title}" ${!allDay ? `from ${convertTimeTo12HourFormat(timeStart)} to ${convertTimeTo12HourFormat(timeEnd)}` : ""}`,
         }
       );
       // Update the events list and close the dialog
@@ -321,7 +318,7 @@ export default function Calendar({ searchParams }: { searchParams: Message }) {
     return (
       <div className={`flex flex-col gap-1 ${i > 0 && `border-t mt-2 pt-2`}`}>
         <section className="text-md flex justify-between">
-          <div className="flex gap-4">
+          <div className="flex flex-wrap gap-x-4 max-w-1/2 ">
             {pinnedOpen && (
               <p className="whitespace-nowrap flex items-center">
                 {event.date?.substring(5, 7)}/{event.date?.substring(8, 10)}/
@@ -333,7 +330,7 @@ export default function Calendar({ searchParams }: { searchParams: Message }) {
                 <Badge>{event.type.toUpperCase()} </Badge>
               </div>
             ) : (
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-x-2">
                 <Badge>{event.type.toUpperCase()} </Badge>
                 <p className="whitespace-nowrap flex items-center">
                   {convertTimeTo12HourFormat(event.time_start)}
