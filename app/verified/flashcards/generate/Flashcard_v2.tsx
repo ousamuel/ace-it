@@ -4,6 +4,14 @@ import { createClient } from "@/utils/supabase/client";
 import { redirect } from "next/navigation";
 import { Box, Button, Typography } from "@mui/material";
 import { toast } from "sonner";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function Flashcard_v2({ shouldFetch }: { shouldFetch: boolean }) {
   const supabase = createClient();
@@ -137,18 +145,32 @@ export default function Flashcard_v2({ shouldFetch }: { shouldFetch: boolean }) 
         <p className="text-md">
             {currentIndex + 1}/{flashcards.length}
         </p>
-        <button
-          onClick={() => deleteFlashcard(currentCard)}
-          className="cursor-pointer text-red-500 rounded hover:bg-red-200/20 p-1 px-2"
-        >
-          Delete
-        </button>
-        <button
-          onClick={() => clearFlashcards(currentCard)}
-          className="cursor-pointer text-red-500 rounded hover:bg-red-200/20 p-1 px-2"
-        >
-          clear
-        </button>
+        <DropdownMenu>
+          <DropdownMenuTrigger>
+            <img
+              className="dark:invert dark:filter py-1"
+              width={20}
+              src="/options.svg"
+            />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuItem
+              id="delete-card"
+              className="text-red-500 hover:bg-red-200/20"
+              onClick={() => { deleteFlashcard(currentCard)}}
+            >
+              Delete
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              id="clear-card"
+              className="text-red-500 hover:bg-red-800"
+              onClick={() => { clearFlashcards(currentCard)}}
+            >
+              Clear
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
       <div className="flex justify-center items-center gap-4">
         <div onClick={handleCardClick}>

@@ -23,21 +23,15 @@ import {
 } from "@/components/ui/breadcrumb";
 import {
   Box,
-  Stack,
-  Container,
-  Typography,
-  Paper,
-  TextField,
-  Button,
-  Grid,
-  CardActionArea,
-  CardContent,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
 } from "@mui/material";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import Flashcard from "./Flashcard";
 import Flashcard_v2 from "./Flashcard_v2";
 
@@ -139,7 +133,8 @@ export default function GenerateFlashcards({
             <h3 className="text-2xl font-semibold tracking-tight">
                 My Flashcards
             </h3>
-                <Flashcard_v2 shouldFetch={shouldFetch} />
+            
+            <Flashcard_v2 shouldFetch={shouldFetch} />
         </div>
        </ContentLayout>
     );
