@@ -64,7 +64,7 @@ export default function Calendar({ searchParams }: { searchParams: Message }) {
     allDay: false,
     timeStart: "",
     timeEnd: "",
-    type: "exam",
+    type: "reminder",
   });
   const [isLoading, setIsLoading] = useState(true);
 
@@ -106,7 +106,7 @@ export default function Calendar({ searchParams }: { searchParams: Message }) {
       allDay: false,
       timeStart: "",
       timeEnd: "",
-      type: "exam",
+      type: "reminder",
     });
     setIsAllDay(false);
   };
@@ -203,10 +203,8 @@ export default function Calendar({ searchParams }: { searchParams: Message }) {
     e.preventDefault();
     const { title, description, date, allDay, timeStart, timeEnd, type } =
       formData;
-    if (!title || !description) {
-      toast("Missing fields:", {
-        description: `${!title && "Title"} ${!description && "Description"}`,
-      });
+    if (!title) {
+      toast("Missing field: Title");
       return;
     }
     if (!allDay && (!timeStart || !timeEnd)) {
@@ -564,7 +562,7 @@ export default function Calendar({ searchParams }: { searchParams: Message }) {
                 >
                   <div className="flex flex-col md:flex-row gap-4">
                     <section className="flex flex-1 flex-col gap-4">
-                      <Label htmlFor="title">Title</Label>
+                      <Label htmlFor="title">Title *</Label>
                       <Input
                         type="text"
                         name="title"
@@ -653,6 +651,7 @@ export default function Calendar({ searchParams }: { searchParams: Message }) {
                             required
                             className="border rounded p-2"
                           >
+                            <option value="reminder">Reminder</option>
                             <option value="exam">Exam</option>
                             <option value="assignment">Assignment</option>
                             <option value="personal">Personal</option>
