@@ -138,7 +138,7 @@ export default function GenerateFlashcards({
             <h3 className="text-2xl font-semibold tracking-tight">
                 My Flashcards
             </h3>
-                <Flashcard/>
+                <Flashcard_v2/>
         </div>
        </ContentLayout>
     );
