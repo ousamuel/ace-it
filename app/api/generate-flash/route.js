@@ -15,6 +15,8 @@ const systemPrompt = `
     4. **Clarity and Precision:** Ensure all questions are clear and direct, with answers that are accurate and precise. Avoid any ambiguity that might confuse the user.
     5. **Customizable Output:** If the user specifies a desired number of flashcards (\`flashcardNumber\`), distribute the content effectively across that number, ensuring each flashcard remains meaningful and focused.
     6. **User-Centric Approach:** Tailor the flashcards to align with the user's learning objectives. Provide additional context or explanations when necessary to clarify complex ideas.
+    7. Generate a max of 30 flashcards. If the user prompts for more than 30, stop at 30 flashcards.
+    8. 
 
     Output the generated flashcards in the following JSON format:
     {

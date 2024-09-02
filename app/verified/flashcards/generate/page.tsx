@@ -117,7 +117,7 @@ export default function GenerateFlashcards({
                         rows={4}
                         required
                     />
-                    <Label htmlFor="setName">Number</Label>
+                    <Label htmlFor="setName">Number of Flashcards</Label>
                     <Input
                         type="text"
                         id="setNumber"

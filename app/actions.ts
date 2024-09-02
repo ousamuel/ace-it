@@ -61,10 +61,12 @@ export const addFlashcards = async (formData: FormData) => {
   .select();
 
   // Save set to Supabase
-  const { error: setError } = await supabase.from("flashcard_set").insert({
-    notes,
-    set_name: setName,
-    user_uid: user.id,
+  const { error: setError} = await supabase
+    .from("flashcard_set")
+    .insert({
+      notes,
+      set_name: setName,
+      user_uid: user.id,
   });
 
   if (flashcardsError) {
