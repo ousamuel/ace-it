@@ -8,6 +8,7 @@ import {
   LucideIcon,
   Calendar,
   LibraryBig,
+  NotebookText,
 } from "lucide-react";
 
 type Submenu = {
@@ -69,6 +70,13 @@ export function getMenuList(pathname: string): Group[] {
           label: "Flashcards",
           active: pathname.includes("/flashcards"),
           icon: LibraryBig,
+          submenus: [],
+        },
+        {
+          href: "/verified/mock-exams",
+          label: "Mock Exams",
+          active: pathname.includes("/mock-exams"),
+          icon: NotebookText,
           submenus: [],
         },
       ],

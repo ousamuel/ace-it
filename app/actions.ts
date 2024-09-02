@@ -13,15 +13,12 @@ export const addFlashcards = async (formData: FormData) => {
   const notes = formData.get("notes")?.toString();
   const setName = formData.get("setName")?.toString();
   const number = formData.get("setNumber")?.toString();
-
   if (!notes) {
     return { error: "Notes are required to generate flashcards" };
   }
-
   const {
     data: { user },
   } = await supabase.auth.getUser();
-
   if (!user) {
     return encodedRedirect(
       "error",
@@ -29,11 +26,9 @@ export const addFlashcards = async (formData: FormData) => {
       "You must be logged in to add flashcards"
     );
   }
-
   // Call the AI API to generate flashcards
   const origin = headers().get("origin");
   const apiUrl = `${origin}/api/generate`;
-
   const response = await fetch(apiUrl, {
     method: "POST",
     headers: {
@@ -89,6 +84,86 @@ export const addFlashcards = async (formData: FormData) => {
     "success",
     "/verified/flashcards/generate",
     "Flashcards generated and saved successfully!"
+  );
+};
+export const addExam = async (formData: FormData) => {
+  const supabase = createClient();
+  const notes = formData.get("notes")?.toString();
+  const examName = formData.get("examName")?.toString();
+  const questionCount = formData.get("questionCount")?.toString();
+
+  if (!notes) {
+    return { error: "Notes are required to generate an exam" };
+  }
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return encodedRedirect(
+      "error",
+      "/sign-in",
+      "You must be logged in to generate an exam"
+    );
+  }
+  const origin = headers().get("origin");
+  const apiUrl = `${origin}/api/generate-exam`;
+
+  const response = await fetch(apiUrl, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      notes: notes,
+      questionCount: questionCount,
+    }),
+  });
+
+  if (!response.ok) {
+    return { error: "Failed to generate exam" };
+  }
+
+  const examQuestions = await response.json();
+
+  // Save exam questions to Supabase
+  const { error: examError } = await supabase.from("exams").insert(
+    examQuestions.map((question: any) => ({
+      question: question.question,
+      answer: question.answer,
+      user_uid: user.id,
+      exam_name: examName,
+    }))
+  );
+
+  // Save exam set details to Supabase
+  const { error: setError } = await supabase.from("exam_set").insert({
+    notes,
+    exam_name: examName,
+    user_uid: user.id,
+  });
+
+  if (examError) {
+    return encodedRedirect(
+      "error",
+      "/protected/exams/generate",
+      examError.message
+    );
+  }
+
+  if (setError) {
+    return encodedRedirect(
+      "error",
+      "/verified/exams/generate",
+      setError.message
+    );
+  }
+
+  return encodedRedirect(
+    "success",
+    "/verified/exams/generate",
+    "Exam generated and saved successfully!"
   );
 };
 
