@@ -16,7 +16,7 @@ const systemPrompt = `
     5. **Customizable Output:** If the user specifies a desired number of questions (\`questionNumber\`), distribute the content effectively across that number, ensuring each question remains meaningful and focused.
     6. **User-Centric Approach:** Tailor the questions to align with the user's learning objectives. Provide additional context or explanations when necessary to clarify complex ideas.
     7. Make sure that within the 4 options, only one of them is the correct answer.
-    8. **Options:** Yoyu must include 4 options for the user to select from. The user must be challenged to find the correct answer from the options.
+    8. **Options:** Yoy must include 4 options for the user to select from. The user must be challenged to find the correct answer from the options.
     Output the generated questions in the following JSON format:
     {
         "examQuestions": [

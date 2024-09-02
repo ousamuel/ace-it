@@ -23,21 +23,15 @@ import {
 } from "@/components/ui/breadcrumb";
 import {
   Box,
-  Stack,
-  Container,
-  Typography,
-  Paper,
-  TextField,
-  Button,
-  Grid,
-  CardActionArea,
-  CardContent,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
 } from "@mui/material";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import Flashcard from "./Flashcard";
 import Flashcard_v2 from "./Flashcard_v2";
 
@@ -51,10 +45,11 @@ export default function GenerateFlashcards({
   const [setName, setSetName] = useState("");
   const [notes, setNotes] = useState("");
   const [number, setNumber] = useState("");
+  const [shouldFetch, setShouldFetch] = useState(false);
 
-  const handleSubmit = async () => {
-    // Generate a unique set ID
-    // const setId = uuidv4();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setShouldFetch(false);
 
     const formData = new FormData();
     formData.append("notes", notes);
@@ -65,7 +60,7 @@ export default function GenerateFlashcards({
     if (response?.error) {
       console.error(response.error);
     } else {
-      router.push("/verified/flashcards/generate");
+      setShouldFetch(true);
     }
   };
 
@@ -110,18 +105,18 @@ export default function GenerateFlashcards({
                         id="notes"
                         name="notes"
                         className="w-full p-2 border rounded"
-                        placeholder="Enter topics or notes you would like to study and tell us how many flashcards you want"
+                        placeholder="Enter any topics or notes you would like to study."
                         value={notes}
                         onChange={(e) => setNotes(e.target.value)}
                         rows={4}
                         required
                     />
-                    <Label htmlFor="setName">Number</Label>
+                    <Label htmlFor="setName">Number of Flashcards</Label>
                     <Input
                         type="text"
                         id="setNumber"
                         name="setNumber"
-                        placeholder="5"
+                        placeholder="1-30 flashcards"
                         value={number}
                         onChange={(e) => setNumber(e.target.value)}
                         required
@@ -132,13 +127,13 @@ export default function GenerateFlashcards({
                     >
                         Generate Flashcards
                     </button>
-                    <FormMessage message={searchParams} />
                 </div>
             </form>
             <h3 className="text-2xl font-semibold tracking-tight">
                 My Flashcards
             </h3>
-                <Flashcard_v2/>
+            
+            <Flashcard_v2 shouldFetch={shouldFetch} />
         </div>
        </ContentLayout>
     );
