@@ -240,9 +240,9 @@ export default function Calendar({ searchParams }: { searchParams: Message }) {
     } else {
       toast(
         `Event added for ${
-          selectedDate?.substring(5, 7) /
-          selectedDate?.substring(8, 10) /
-          selectedDate?.substring(0, 4)
+          selectedDate?.substring(5, 7)} /${
+          selectedDate?.substring(8, 10)} /
+          ${selectedDate?.substring(0, 4)}
         }`,
         {
           description: `${title} ${!allDay && `from ${convertTimeTo12HourFormat(timeStart)} to ${convertTimeTo12HourFormat(timeEnd)}`}`,
