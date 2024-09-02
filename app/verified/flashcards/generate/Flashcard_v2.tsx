@@ -80,6 +80,12 @@ export default function Flashcard_v2() {
         <Button variant="contained" onClick={handlePrev}>
           &lt; Prev
         </Button>
+        {/* <button
+           onClick={handlePrev}
+            className="px-4 py-2 font-bold text-white bg-green-700 rounded hover:bg-green-500 cursor-pointer"
+        >
+            Generate Flashcards
+        </button> */}
         <div onClick={handleCardClick}>
           <Box
             sx={{
