@@ -12,7 +12,7 @@ const systemPrompt = `
   When generating flashcards, focus on the key concepts, terms, definitions, or questions that are most relevant to the subject matter. 
   Ensure that the questions are straightforward and the answers are accurate. 
   If the user provides text that is complex or lengthy, break it down into multiple flashcards for easier learning.
-  Generate 1 flashcards at a time, unless specified otherwise. Max of 5 flashcards.
+  
 
   Return in the following JSON format:
   {
