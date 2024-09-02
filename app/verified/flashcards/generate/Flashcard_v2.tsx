@@ -66,34 +66,28 @@ export default function Flashcard_v2() {
   }, [flashcards]);
 
   if (flashcards.length === 0) {
-    return <Typography>Loading flashcards...</Typography>;
+    return <p>Loading flashcards...</p>;
   }
 
   const currentCard = flashcards[currentIndex];
 
   return (
     <div className="text-center">
-      <Typography variant="h5" gutterBottom>
+      <p className="text-md pb-5 text-zinc-500">
         Use the left and right arrows to navigate through the flashcards. Click on the card or use the "Flip" button to view the answer.
+      </p>
+      <Typography variant="caption" display="block" className="mt-2">
+          {currentIndex + 1}/{flashcards.length}
       </Typography>
       <div className="flex justify-center items-center gap-4">
-        <Button variant="contained" onClick={handlePrev}>
-          &lt; Prev
-        </Button>
-        {/* <button
-           onClick={handlePrev}
-            className="px-4 py-2 font-bold text-white bg-green-700 rounded hover:bg-green-500 cursor-pointer"
-        >
-            Generate Flashcards
-        </button> */}
         <div onClick={handleCardClick}>
           <Box
             sx={{
               borderRadius: "20px",
               border: "1px rgba(34, 197, 94, 0.5) solid",
               perspective: "1000px",
-              width: "300px",
-              height: "200px",
+              width: {xs:"300px",lg:"500px", xl:"800px"},
+              height: {xs:"200px",lg:"300px", xl:"500px"},
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -138,16 +132,32 @@ export default function Flashcard_v2() {
             </div>
           </Box>
         </div>
-        <Button variant="contained" onClick={handleNext}>
-          Next &gt;
-        </Button>
+
       </div>
-      <Button variant="outlined" onClick={handleCardClick} className="mt-4">
-        Flip
-      </Button>
-      <Typography variant="caption" display="block" className="mt-2">
-        {currentIndex + 1}/{flashcards.length}
-      </Typography>
+      <div className="flex justify-center items-center gap-4 py-5">
+          <button
+              onClick={handlePrev}
+              className="px-4 py-2 font-bold text-white bg-green-700 rounded hover:bg-green-500 cursor-pointer"
+            >
+                &lt; Prev
+          </button>
+          <div className="flex flex-col">
+            <button
+                onClick={handleCardClick}
+                  className="px-4 py-2 font-bold text-white bg-green-700 rounded hover:bg-green-500 cursor-pointer"
+              >
+                Flip
+            </button>
+              
+              </div>
+            <button
+                onClick={handleNext}
+                  className="px-4 py-2 font-bold text-white bg-green-700 rounded hover:bg-green-500 cursor-pointer"
+              >
+                Next &gt;
+              </button>
+          
+        </div>
     </div>
   );
 }
