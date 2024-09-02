@@ -120,10 +120,10 @@ export default function Flashcard_v2({ shouldFetch }: { shouldFetch: boolean }) 
   }, [flashcards]);
 
   if (loading){
-    return <p>Flashcards loading...</p>;
+    return <p className="text-zinc-500">Flashcards loading...</p>;
   }
   if (flashcards.length === 0) {
-    return <p>No flashcards yet...</p>;
+    return <p className="text-zinc-500">No flashcards yet...</p>;
   }
 
   const currentCard = flashcards[currentIndex];
