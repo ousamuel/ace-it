@@ -21,7 +21,7 @@ export default function Flashcard_v2({ shouldFetch }: { shouldFetch: boolean }) 
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (shouldFetch) {
+    // if (shouldFetch) {
       const fetchUserFlashcards = async () => {
         const {
           data: { user },
@@ -48,7 +48,7 @@ export default function Flashcard_v2({ shouldFetch }: { shouldFetch: boolean }) 
       };
 
       fetchUserFlashcards();
-    }
+    // }
   }, [supabase, shouldFetch]);
 
   const deleteFlashcard = async (flashcard: any) => {
@@ -198,7 +198,7 @@ export default function Flashcard_v2({ shouldFetch }: { shouldFetch: boolean }) 
                 position: "absolute",
                 borderRadius: "20px",
                 width: "100%",
-                height: "60%",
+                height: "100%",
                 backfaceVisibility: "hidden",
                 display: "flex",
                 justifyContent: "center",
@@ -217,7 +217,7 @@ export default function Flashcard_v2({ shouldFetch }: { shouldFetch: boolean }) 
                   {currentCard.question}
                 </Typography>
               </div>
-              <div>
+              <div className="bg-green-500/10">
                 <Typography variant="h6" component="p">
                   {currentCard.answer}
                 </Typography>

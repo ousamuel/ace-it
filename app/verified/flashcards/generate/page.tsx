@@ -105,7 +105,7 @@ export default function GenerateFlashcards({
                         id="notes"
                         name="notes"
                         className="w-full p-2 border rounded"
-                        placeholder="Enter topics or notes you would like to study and tell us how many flashcards you want"
+                        placeholder="Enter any topics or notes you would like to study."
                         value={notes}
                         onChange={(e) => setNotes(e.target.value)}
                         rows={4}
@@ -116,7 +116,7 @@ export default function GenerateFlashcards({
                         type="text"
                         id="setNumber"
                         name="setNumber"
-                        placeholder="5"
+                        placeholder="1-30 flashcards"
                         value={number}
                         onChange={(e) => setNumber(e.target.value)}
                         required
@@ -127,7 +127,6 @@ export default function GenerateFlashcards({
                     >
                         Generate Flashcards
                     </button>
-                    <FormMessage message={searchParams} />
                 </div>
             </form>
             <h3 className="text-2xl font-semibold tracking-tight">
