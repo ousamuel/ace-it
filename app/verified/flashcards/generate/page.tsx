@@ -39,6 +39,7 @@ import {
     DialogActions,
   } from "@mui/material";
 import Flashcard from "./Flashcard";
+import Flashcard_v2 from "./Flashcard_v2";
 
 export default function GenerateFlashcards({ searchParams }: { searchParams: Message }) {
     const supabase = createClient();
