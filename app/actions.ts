@@ -28,7 +28,7 @@ export const addFlashcards = async (formData: FormData) => {
   }
   // Call the AI API to generate flashcards
   const origin = headers().get("origin");
-  const apiUrl = `${origin}/api/generate`;
+  const apiUrl = `${origin}/api/generate-flash`;
   const response = await fetch(apiUrl, {
     method: "POST",
     headers: {

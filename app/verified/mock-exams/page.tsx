@@ -1,4 +1,4 @@
-// generate/page.tsx
+// mock-exams/page.tsx
 "use client";
 
 import { useState, useEffect } from "react";
