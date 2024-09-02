@@ -59,7 +59,7 @@ export default async function Waitlist({
         hover:shadow-xl hover:shadow-green-500/50 
         transition-all duration-300 ease-in-out transform`}
       >
-        <Link href="/verified/flashcards/generate">Try a Demo</Link>
+        <Link href="/verified/flashcards/generate">Try it Now</Link>
       </button>
       <form className="flex flex-col w-full max-w-md p-4 gap-2 [&>input]:mb-4">
         <div className="flex flex-col gap-2 [&>input]:mb-3 mt-8">
