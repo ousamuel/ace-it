@@ -127,18 +127,37 @@ export const addExam = async (formData: FormData) => {
     return { error: "Failed to generate exam" };
   }
   const examQuestions = await response.json();
-  // Save exam questions to Supabase
-  const { error: examError } = await supabase.from("mock_exams").insert(
-    examQuestions.map((question: any) => ({
-      question: question.question,
-      answer: question.answer,
-      user_uid: user.id,
-      exam_name: examName,
-      options: question.options,
-    }))
-  );
+
+  const date = new Date();
+  // Save exam set to Supabase
+  const { error: examError } = await supabase.from("mock_exams").insert({
+    exam_name: examName,
+    user_uid: user.id,
+    created_on: date,
+  });
+
   if (examError) {
-    return encodedRedirect("error", "/verified/mock-exams", examError.message);
+    return;
+  } else {
+    const { data, error: examIdError } = await supabase
+      .from("mock_exams")
+      .select("exam_uid")
+      .eq("user_uid", user.id)
+      .eq("exam_name", examName);
+    // Save questions linked to exam set
+    if (!examIdError) {
+      const { error: questionsError } = await supabase
+        .from("mock_exam_questions")
+        .insert(
+          examQuestions.map((question: any) => ({
+            question: question.question,
+            answer: question.answer,
+            user_uid: user.id,
+            options: question.options,
+            exam_uid: data[0].exam_uid,
+          }))
+        );
+    }
   }
 };
 

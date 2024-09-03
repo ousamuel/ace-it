@@ -64,7 +64,7 @@ export default function Calendar({ searchParams }: { searchParams: Message }) {
     allDay: false,
     timeStart: "",
     timeEnd: "",
-    type: "exam",
+    type: "reminder",
   });
   const [isLoading, setIsLoading] = useState(true);
 
@@ -106,7 +106,7 @@ export default function Calendar({ searchParams }: { searchParams: Message }) {
       allDay: false,
       timeStart: "",
       timeEnd: "",
-      type: "exam",
+      type: "reminder",
     });
     setIsAllDay(false);
   };
@@ -239,9 +239,10 @@ export default function Calendar({ searchParams }: { searchParams: Message }) {
       console.error("Error adding event:", error);
     } else {
       toast(
-        `Event added for ${
-          selectedDate?.substring(5, 7)} /${
-          selectedDate?.substring(8, 10)} /
+        `Event added for ${selectedDate?.substring(
+          5,
+          7
+        )} /${selectedDate?.substring(8, 10)} /
           ${selectedDate?.substring(0, 4)}
         }`,
         {
@@ -660,6 +661,7 @@ export default function Calendar({ searchParams }: { searchParams: Message }) {
                             required
                             className="border rounded p-2"
                           >
+                            <option value="reminder">Reminder</option>
                             <option value="exam">Exam</option>
                             <option value="assignment">Assignment</option>
                             <option value="personal">Personal</option>
