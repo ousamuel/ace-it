@@ -25,6 +25,11 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { Separator } from "@/components/ui/separator";
 import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
   Accordion,
   AccordionContent,
   AccordionItem,
@@ -57,12 +62,25 @@ export default function MockExam() {
   const [examName, setExamName] = useState("");
   const [notes, setNotes] = useState("");
   const [questionCount, setQuestionCount] = useState("");
+
   const [exams, setExams] = useState<any[]>([]);
+  const [examNameNonform, setExamNameNonform] = useState<string>("");
   const [examQuestions, setExamQuestions] = useState<any[] | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
-  const [isGenerateDisabled, setIsGenerateDisabled] = useState<boolean>(false);
   const [showAnswers, setShowAnswers] = useState<boolean>(false);
-
+  const [numberCorrect, setNumberCorrect] = useState<number>(0);
+  const [previousScore, setPreviousScore] = useState<string>("");
+  const [isGenerateDisabled, setIsGenerateDisabled] = useState<boolean>(false);
+  const [selectedOptions, setSelectedOptions] = useState<{
+    [key: number]: string;
+  }>({});
+  // Function to handle option selection
+  const handleOptionChange = (questionIndex: number, option: string) => {
+    setSelectedOptions((prev) => ({
+      ...prev,
+      [questionIndex]: option,
+    }));
+  };
   const handleSubmit = async (e: any) => {
     setIsGenerateDisabled(true);
     toast("Submitting request...");
@@ -156,6 +174,39 @@ export default function MockExam() {
       // fetchUserAndEvents();
     }
   };
+  const handleCheckAnswers = async (examUID: string) => {
+    const date = new Date();
+    setShowAnswers(true);
+    let correctCount = 0;
+
+    const updateExamScoreAndDate = async (previousScore: string) => {
+      console.log(previousScore);
+      const { error } = await supabase
+        .from("mock_exams")
+        .update({
+          last_taken: date,
+          previous_score: previousScore,
+        })
+        .eq("exam_uid", examUID);
+
+      if (error) {
+        console.log(error);
+      }
+    };
+    try {
+      examQuestions?.forEach((question, i) => {
+        if (selectedOptions[i] == question.answer) {
+          correctCount++;
+        }
+      });
+      setNumberCorrect(correctCount);
+      setPreviousScore(`${correctCount}/${examQuestions?.length}`);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      await updateExamScoreAndDate(`${correctCount}/${examQuestions?.length}`);
+    }
+  };
   const capitalizeFirstLetter = (str: string) => {
     return str.charAt(0).toUpperCase() + str.slice(1);
   };
@@ -188,10 +239,141 @@ export default function MockExam() {
             My Saved Exams
           </h1>
           <div className="flex flex-col gap-4 pt-4">
+            <Dialog
+              open={isDialogOpen}
+              onOpenChange={(open) => {
+                if (!open) {
+                  setSelectedOptions({});
+                  setExamQuestions([]);
+                  setShowAnswers(false);
+                  setNumberCorrect(0);
+                }
+                setIsDialogOpen(open);
+              }}
+            >
+              <DialogTrigger asChild></DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>
+                    {capitalizeFirstLetter(examNameNonform)}
+                  </DialogTitle>
+                  <DialogDescription asChild className="text-foreground">
+                    <ol
+                      className="max-h-[65vh] md:max-h-[75vh] overflow-y-scroll 
+                                  list-decimal flex flex-col gap-4 pl-5"
+                    >
+                      {examQuestions && examQuestions.length > 0 ? (
+                        examQuestions.map((question: any, i: number) => (
+                          <li key={i}>
+                            <h2
+                              className={`font-semibold pl-2 mb-2 text-left ${showAnswers ? "text-muted-foreground" : ""}`}
+                            >
+                              {question.question}
+                            </h2>
+                            <RadioGroup
+                              value={selectedOptions[i]}
+                              onValueChange={(value) =>
+                                handleOptionChange(i, value)
+                              }
+                            >
+                              {question.options.length == 4 ? (
+                                question.options.map(
+                                  (option: string, j: number) => (
+                                    <div
+                                      key={j}
+                                      className="flex items-center space-x-2 pl-2 w-full"
+                                    >
+                                      <RadioGroupItem
+                                        value={option}
+                                        disabled={showAnswers}
+                                        id={`question-${i}-option-${j}`}
+                                      />
+                                      <Label
+                                        htmlFor={`question-${i}-option-${j}`}
+                                        className={`${
+                                          showAnswers &&
+                                          selectedOptions[i] === option
+                                            ? option == question.answer
+                                              ? "text-green-500"
+                                              : "text-red-500"
+                                            : ""
+                                        } py-1`}
+                                      >
+                                        {option}
+                                      </Label>
+                                    </div>
+                                  )
+                                )
+                              ) : showAnswers ? (
+                                <Popover>
+                                  <PopoverTrigger className="text-left pl-2 w-fit">
+                                    Click for example
+                                  </PopoverTrigger>
+                                  <PopoverContent>
+                                    {question.answer}
+                                  </PopoverContent>
+                                </Popover>
+                              ) : (
+                                <p className="text-sm text-muted-foreground pl-2">
+                                  A short answer example will be provided after
+                                  submission
+                                </p>
+                              )}
+                            </RadioGroup>
+                          </li>
+                        ))
+                      ) : (
+                        <div className="flex flex-col gap-4 p-4">
+                          <Skeleton className="h-6 w-full rounded-lg" />
+                          <div className="flex flex-col gap-2">
+                            <Skeleton className="h-4 w-1/2 rounded-md" />
+                            <Skeleton className="h-4 w-1/2 rounded-md" />
+                            <Skeleton className="h-4 w-1/2 rounded-md" />
+                            <Skeleton className="h-4 w-1/2 rounded-md" />
+                          </div>
+                          <Skeleton className="h-6 w-full rounded-lg" />
+                          <div className="flex flex-col gap-2">
+                            <Skeleton className="h-4 w-1/2 rounded-md" />
+                            <Skeleton className="h-4 w-1/2 rounded-md" />
+                            <Skeleton className="h-4 w-1/2 rounded-md" />
+                            <Skeleton className="h-4 w-1/2 rounded-md" />
+                          </div>
+                        </div>
+                      )}
+                    </ol>
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter className="flex justify-between">
+                  {examQuestions && (
+                    <Button
+                      disabled={showAnswers}
+                      onClick={() => {
+                        // console.log(examQuestions)
+                        handleCheckAnswers(examQuestions[0].exam_uid);
+                      }}
+                    >
+                      Submit
+                    </Button>
+                  )}
+                  {showAnswers
+                    ? numberCorrect > 0
+                      ? `${numberCorrect}/${examQuestions?.length} correct`
+                      : `0/${examQuestions?.length} correct`
+                    : null}
+                  <Button
+                    onClick={() => {
+                      setIsDialogOpen(false);
+                    }}
+                  >
+                    Close
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
             <Accordion type="multiple" className="flex flex-col gap-4">
               {exams.length > 0 ? (
                 exams.map((exam: any, i: number) => (
-                  <Card className="w-full">
+                  <Card key={i} className="w-full">
                     <AccordionItem
                       key={i}
                       value={exam.exam_name + i}
@@ -201,146 +383,22 @@ export default function MockExam() {
                         <CardHeader className="p-0 py-4 px-4">
                           <CardTitle className="flex justify-between lg:text-2xl">
                             {capitalizeFirstLetter(exam.exam_name)}
-                            {/* <img width={40} src="/options.svg" alt="options" /> */}
-                            {/* <EllipsisVertical className="" /> */}
-                            {/* <DropdownMenu>
-                            <DropdownMenuTrigger>
-                              <img
-                                className="dark:invert dark:filter py-1"
-                                width={20}
-                                src="/options.svg"
-                              />
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent>
-                              <DropdownMenuItem>Edit</DropdownMenuItem>
-                              <DropdownMenuSeparator />
-                              <DropdownMenuItem
-                                id="delete-event"
-                                className="text-red-500 hover:bg-red-800"
-                              >
-                                <Popover>
-                                  <PopoverTrigger>Delete</PopoverTrigger>
-                                  <PopoverContent>
-                                    ds
-                                    <Button onClick={() => deleteExam(topic)}>
-                                Are you sure?
-                              </Button>
-                                  </PopoverContent>
-                                </Popover>
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu> */}
                           </CardTitle>
-                          {/* <CardDescription>Exam description</CardDescription> */}
                         </CardHeader>
                       </AccordionTrigger>
                       <AccordionContent className="pt-4 border-t">
                         <div className="px-4 flex justify-between">
                           <section className="flex flex-col flex-1 gap-1">
-                            {/* <p>notes details</p> */}
-                            <Dialog
-                              open={isDialogOpen}
-                              onOpenChange={(open) => {
-                                if (!open) {
-                                  setExamQuestions(null);
-                                  // setIsAddingEvent(false);
-                                  // setIsEditingEvent(false);
-                                  // setPinnedOpen(false);
-                                  // setSelectedDate("");
-                                  // resetForm();
-                                }
-                                setIsDialogOpen(open);
+                            <Button
+                              className="w-fit flex px-4 h-8"
+                              onClick={() => {
+                                setIsDialogOpen(true);
+                                setExamNameNonform(exam.exam_name);
+                                getExamQuestions(exam.exam_uid);
                               }}
                             >
-                              <DialogTrigger asChild>
-                                <Button
-                                  className="w-fit flex px-4 h-8"
-                                  onClick={() => {
-                                    getExamQuestions(exam.exam_uid);
-                                  }}
-                                >
-                                  Start Exam
-                                </Button>
-                              </DialogTrigger>
-                              <DialogContent>
-                                <DialogHeader>
-                                  <DialogTitle>
-                                    {capitalizeFirstLetter(exam.exam_name)}
-                                  </DialogTitle>
-                                  <DialogDescription
-                                    asChild
-                                    className="text-foreground"
-                                  >
-                                    <ol
-                                      className="max-h-[65vh] md:max-h-[75vh] overflow-y-scroll 
-                                  list-decimal flex flex-col gap-4 pl-5"
-                                    >
-                                      {examQuestions ? (
-                                        examQuestions.map(
-                                          (question: any, i: number) => (
-                                            <li key={i}>
-                                              <h2 className="font-semibold pl-2 mb-2 text-left">
-                                                {question.question}
-                                              </h2>
-                                              <RadioGroup defaultValue="comfortable">
-                                                {question.options.map(
-                                                  (
-                                                    option: string,
-                                                    i: number
-                                                  ) => (
-                                                    <div
-                                                      key={i}
-                                                      className="flex items-center space-x-2 pl-2"
-                                                    >
-                                                      <RadioGroupItem
-                                                        value={option}
-                                                        id={option}
-                                                      />
-                                                      <Label htmlFor={option}>
-                                                        {option}
-                                                      </Label>
-                                                    </div>
-                                                  )
-                                                )}
-                                              </RadioGroup>
-                                            </li>
-                                          )
-                                        )
-                                      ) : (
-                                        <div className="flex flex-col gap-4 p-4">
-                                          <Skeleton className="h-6 w-full rounded-lg" />
-                                          <div className="flex flex-col gap-2">
-                                            <Skeleton className="h-4 w-1/2 rounded-md" />
-                                            <Skeleton className="h-4 w-1/2 rounded-md" />
-                                            <Skeleton className="h-4 w-1/2 rounded-md" />
-                                            <Skeleton className="h-4 w-1/2 rounded-md" />
-                                          </div>
-                                          <Skeleton className="h-6 w-full rounded-lg" />
-                                          <div className="flex flex-col gap-2">
-                                            <Skeleton className="h-4 w-1/2 rounded-md" />
-                                            <Skeleton className="h-4 w-1/2 rounded-md" />
-                                            <Skeleton className="h-4 w-1/2 rounded-md" />
-                                            <Skeleton className="h-4 w-1/2 rounded-md" />
-                                          </div>
-                                        </div>
-                                      )}
-                                    </ol>
-                                  </DialogDescription>
-                                </DialogHeader>
-                                <DialogFooter className="flex justify-between">
-                                  <Button
-                                    onClick={() => setIsDialogOpen(false)}
-                                  >
-                                    Submit
-                                  </Button>
-                                  <Button
-                                    onClick={() => setIsDialogOpen(false)}
-                                  >
-                                    Close
-                                  </Button>
-                                </DialogFooter>
-                              </DialogContent>
-                            </Dialog>
+                              Start Exam
+                            </Button>
                           </section>
                           {exam.created_on && (
                             <section className="flex flex-col flex-1 gap-1">
@@ -361,10 +419,12 @@ export default function MockExam() {
                                 Last taken on:{" "}
                                 {exam.last_taken ? exam.last_taken : "N/A"}
                               </h4>
-                              <h4>
+                              <h4 className={exam.previous_score ? "" : ""}>
                                 {" "}
                                 Previous score:{" "}
-                                {exam.previous_score ? exam.last_taken : "N/A"}
+                                {exam.previous_score
+                                  ? exam.previous_score
+                                  : "N/A"}
                               </h4>
                             </section>
                           )}
@@ -376,8 +436,9 @@ export default function MockExam() {
                   </Card>
                 ))
               ) : (
-                <p className="text-lg text-muted-foreground">No exams saved yet.</p>
-
+                <p className="text-lg text-muted-foreground">
+                  No exams saved yet.
+                </p>
               )}
             </Accordion>
           </div>
@@ -401,7 +462,11 @@ export default function MockExam() {
                 </h2>
                 <div className="px-2 list-decimal text-left">
                   {instructionList.map((group, groupIndex) => (
-                    <Accordion type="multiple" className="w-full">
+                    <Accordion
+                      key={groupIndex}
+                      type="multiple"
+                      className="w-full"
+                    >
                       {group.items.map((item: any, itemIndex: number) => (
                         <AccordionItem key={itemIndex} value={`${itemIndex}`}>
                           <AccordionTrigger>
