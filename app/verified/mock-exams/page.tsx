@@ -118,7 +118,7 @@ export default function MockExam() {
       .eq("user_uid", user?.id)
       .eq("exam_uid", examUID);
     if (data) {
-      console.log(data);
+      // console.log(data);
       setExamQuestions(data);
     } else if (error) {
       console.error(
@@ -141,7 +141,7 @@ export default function MockExam() {
         .eq("user_uid", user?.id);
 
       if (data) {
-        console.log(data);
+        // console.log(data);
         setExams(data);
       } else if (error) {
         console.error("Error fetching mock exam sets:", error);
@@ -180,7 +180,7 @@ export default function MockExam() {
     let correctCount = 0;
 
     const updateExamScoreAndDate = async (previousScore: string) => {
-      console.log(previousScore);
+      // console.log(previousScore);
       const { error } = await supabase
         .from("mock_exams")
         .update({
