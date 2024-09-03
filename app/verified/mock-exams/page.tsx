@@ -235,7 +235,7 @@ export default function MockExam() {
           <TabsTrigger value="saved-exams">Saved Exams</TabsTrigger>
         </TabsList>
         <TabsContent value="saved-exams">
-          <h1 className="text-3xl font-extrabold tracking-tight lg:text-5xl">
+          <h1 className="text-xl font-extrabold tracking-tight lg:text-3xl">
             My Saved Exams
           </h1>
           <div className="flex flex-col gap-4 pt-4">
@@ -381,7 +381,7 @@ export default function MockExam() {
                     >
                       <AccordionTrigger className="p-4">
                         <CardHeader className="p-0 py-4 px-4">
-                          <CardTitle className="flex justify-between lg:text-2xl">
+                          <CardTitle className="flex justify-between lg:text-lg">
                             {capitalizeFirstLetter(exam.exam_name)}
                           </CardTitle>
                         </CardHeader>
@@ -446,10 +446,10 @@ export default function MockExam() {
         <TabsContent value="new-exam">
           <section className="flex flex-col gap-2 md:gap-6 text-center">
             <div className="flex flex-col gap-1">
-              <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl">
+              <h1 className="text-2xl font-extrabold tracking-tight lg:text-3xl">
                 Mock Exams
               </h1>
-              <h3 className="sm:text-xl font-semibold tracking-tight text-muted-foreground">
+              <h3 className="sm:text-base font-semibold tracking-tight text-muted-foreground">
                 Create custom practice exams to test your knowledge!
               </h3>
             </div>
@@ -457,7 +457,7 @@ export default function MockExam() {
 
             <div className="flex flex-col-reverse md:flex-row gap-2 gap-x-6 px-4">
               <article className="flex flex-col flex-1">
-                <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
+                <h2 className="scroll-m-20 border-b pb-2 text-xl font-semibold tracking-tight first:mt-0">
                   How to Use the Mock Exam Generator
                 </h2>
                 <div className="px-2 list-decimal text-left">
@@ -470,12 +470,12 @@ export default function MockExam() {
                       {group.items.map((item: any, itemIndex: number) => (
                         <AccordionItem key={itemIndex} value={`${itemIndex}`}>
                           <AccordionTrigger>
-                            <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
+                            <h4 className="scroll-m-20 text-md font-semibold tracking-tight">
                               {item.heading}
                             </h4>
                           </AccordionTrigger>
                           <AccordionContent>
-                            <ul className="md:text-lg list-disc pl-4 flex flex-col space-y-2">
+                            <ul className="md:text-base list-disc pl-4 flex flex-col space-y-2">
                               {item.subList.map(
                                 (subItem: string, subItemIndex: number) => (
                                   <li key={subItemIndex}>{subItem}</li>
@@ -495,7 +495,7 @@ export default function MockExam() {
                 onSubmit={(e) => handleSubmit(e)}
               >
                 <div className="flex flex-col gap-2">
-                  <Label htmlFor="examName" className="text-xl">
+                  <Label htmlFor="examName" className="text-lg">
                     Topic of the exam
                   </Label>
                   <Input
@@ -507,7 +507,7 @@ export default function MockExam() {
                     onChange={(e) => setExamName(e.target.value)}
                     required
                   />
-                  <Label htmlFor="notes" className="text-xl">
+                  <Label htmlFor="notes" className="text-lg">
                     Notes
                   </Label>
                   <textarea
@@ -520,7 +520,7 @@ export default function MockExam() {
                     rows={4}
                     required
                   />
-                  <Label htmlFor="questionCount" className="text-xl">
+                  <Label htmlFor="questionCount" className="text-lg">
                     Number of Questions
                   </Label>
                   <Input
