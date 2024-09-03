@@ -31,20 +31,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { ContentLayout } from "@/components/admin-panel/content-layout";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -67,17 +54,17 @@ import { getInstructionList } from "@/lib/mock-instructions";
 export default function MockExam() {
   const instructionList = getInstructionList();
   const supabase = createClient();
-  const router = useRouter();
   const [examName, setExamName] = useState("");
   const [notes, setNotes] = useState("");
   const [questionCount, setQuestionCount] = useState("");
-  const [mockQuestions, setMockQuestions] = useState<any[]>([]);
   const [exams, setExams] = useState<any[]>([]);
   const [examQuestions, setExamQuestions] = useState<any[] | null>(null);
-  const [resetQuestions, setResetQuestions] = useState<boolean>(false);
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
+  const [isGenerateDisabled, setIsGenerateDisabled] = useState<boolean>(false);
 
   const handleSubmit = async (e: any) => {
+    setIsGenerateDisabled(true);
+    toast("Submitting request...");
     e.preventDefault();
     const formData = new FormData();
     formData.append(
@@ -90,15 +77,18 @@ export default function MockExam() {
 
     const response = await addExam(formData); // Use addExam function here
     if (response?.error) {
-      console.error(response.error);
+      toast("Failed to generated exam:", { description: response.error });
+      // console.error(response.error);
     } else {
-      toast("Generating exam questions", {
+      toast("Generating exam questions soon!", {
         description: `Please wait 1-2 minutes to see your new exam in your "Saved Exams" Tab. You may have to refresh the page.`,
       });
-      // setResetQuestions((prev: boolean) => !prev);
-      //   router.push("/verified/exams/generate"); // Redirect to the appropriate route for exams
+      setIsGenerateDisabled(false);
     }
   };
+  // setTimeout(() => {
+  //   setIsGenerateDisabled(false);
+  // }, 3000);
   const getExamQuestions = async (examUID: string) => {
     const {
       data: { user },
@@ -464,12 +454,13 @@ export default function MockExam() {
                     onChange={(e) => setQuestionCount(e.target.value)}
                     required
                   />
-                  <button
+                  <Button
                     type="submit"
                     className="px-4 py-2 font-bold text-white bg-green-700 rounded hover:bg-green-500 cursor-pointer"
+                    disabled={isGenerateDisabled}
                   >
                     Generate Exam
-                  </button>
+                  </Button>
                   {/* <FormMessage message={searchParams} /> */}
                 </div>
               </form>
@@ -477,20 +468,6 @@ export default function MockExam() {
           </section>
         </TabsContent>
       </Tabs>
-      {/* <button onClick={() => console.log(groupedQuestions)}>Saved Exams</button>
-      {examQuestions.map((question: any, i: number) => (
-        <section key={i}>
-          <h2>{question.question}</h2>
-          <RadioGroup defaultValue="comfortable">
-            {question.options.map((option: string, i: number) => (
-              <div key={i} className="flex items-center space-x-2">
-                <RadioGroupItem value={option} id={option} />
-                <Label htmlFor={option}>{option}</Label>
-              </div>
-            ))}
-          </RadioGroup>
-        </section>
-      ))} */}
     </ContentLayout>
   );
 }
