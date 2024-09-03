@@ -3,6 +3,11 @@ import { createClient } from "@/utils/supabase/server";
 import { InfoIcon } from "lucide-react";
 import { redirect } from "next/navigation";
 import { ContentLayout } from "@/components/admin-panel/content-layout";
+import { addSuggestionAction } from "../../actions";
+import { FormMessage, Message } from "@/components/form-message";
+import { SubmitButton } from "@/components/submit-button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -11,8 +16,23 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+
+
 import Link from "next/link";
-export default async function Home() {
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Message;
+}) {
   const supabase = createClient();
 
   const {
@@ -74,6 +94,43 @@ export default async function Home() {
           quick quizzes or ask for clarifications on tough topics – all through
           a seamless conversational interface.
         </p>
+
+        <div className="flex py-5">
+          <Dialog>
+            <DialogTrigger>
+              <button className="px-4 py-2 font-bold text-white bg-green-700 rounded hover:bg-green-500 cursor-pointer">
+                Leave a Suggestion!
+              </button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                  <form className="flex flex-col w-full p-4 gap-2 [&>input]:mb-4">
+                  <DialogTitle>Leave a Suggestion!</DialogTitle>
+                    <div className="flex flex-col gap-2 [&>input]:mb-3 mt-8">
+                      <Label className="text-md text-muted-foreground" htmlFor="suggestion">
+                        If you have any suggestions or features you would like to see,
+                        please let us know here!
+                      </Label>
+                      <Input
+                        type="text"
+                        name="suggestion"
+                        placeholder="E.G. 'I would like to see an interactive calendar' "
+                        // minLength={6}
+                        required
+                      />
+                      <SubmitButton
+                        formAction={addSuggestionAction}
+                        pendingText="Submitting..."
+                      >
+                        Submit
+                      </SubmitButton>
+                      <FormMessage message={searchParams} />
+                    </div>
+                  </form>
+              </DialogHeader>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
     </ContentLayout>
   );
