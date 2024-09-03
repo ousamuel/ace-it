@@ -77,7 +77,8 @@ export default function MockExam() {
   const [resetQuestions, setResetQuestions] = useState<boolean>(false);
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
     const formData = new FormData();
     formData.append(
       "notes",
@@ -91,6 +92,9 @@ export default function MockExam() {
     if (response?.error) {
       console.error(response.error);
     } else {
+      toast("Generating exam questions", {
+        description: `Please wait 1-2 minutes to see your new exam in your "Saved Exams" Tab. You may have to refresh the page.`,
+      });
       // setResetQuestions((prev: boolean) => !prev);
       //   router.push("/verified/exams/generate"); // Redirect to the appropriate route for exams
     }
@@ -419,7 +423,7 @@ export default function MockExam() {
               <Separator className="flex md:hidden " />
               <form
                 className="flex flex-col flex-1 gap-2 rounded-lg"
-                onSubmit={handleSubmit}
+                onSubmit={(e) => handleSubmit(e)}
               >
                 <div className="flex flex-col gap-2">
                   <Label htmlFor="examName" className="text-xl">
