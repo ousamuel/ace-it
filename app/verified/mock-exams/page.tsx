@@ -245,9 +245,9 @@ export default function MockExam() {
                 if (!open) {
                   setSelectedOptions({});
                   setExamQuestions([]);
-                  setShowAnswers(false);
                   setNumberCorrect(0);
                 }
+                setShowAnswers(false);
                 setIsDialogOpen(open);
               }}
             >
