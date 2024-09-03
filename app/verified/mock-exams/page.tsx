@@ -10,6 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { CircleX } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { createClient } from "@/utils/supabase/client";
 import { Input } from "@/components/ui/input";
@@ -74,6 +75,30 @@ export default function MockExam() {
   const [selectedOptions, setSelectedOptions] = useState<{
     [key: number]: string;
   }>({});
+
+  useEffect(() => {
+    const fetchMockExams = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) {
+        return redirect("/sign-in");
+      }
+      const { data, error } = await supabase
+        .from("mock_exams")
+        .select("*")
+        .eq("user_uid", user?.id);
+
+      if (data) {
+        // console.log(data);
+        setExams(data);
+      } else if (error) {
+        console.error("Error fetching mock exam sets:", error);
+      }
+    };
+    fetchMockExams();
+  }, [supabase]);
+
   // Function to handle option selection
   const handleOptionChange = (questionIndex: number, option: string) => {
     setSelectedOptions((prev) => ({
@@ -82,27 +107,48 @@ export default function MockExam() {
     }));
   };
   const handleSubmit = async (e: any) => {
-    setIsGenerateDisabled(true);
-    toast("Submitting request...");
     e.preventDefault();
-    const formData = new FormData();
-    formData.append(
-      "notes",
-      notes +
-        "Please include 4 options for each question, with one option being the correct answer"
-    );
-    formData.append("examName", examName);
-    formData.append("questionCount", questionCount);
-
-    const response = await addExam(formData); // Use addExam function here
-    if (response?.error) {
-      toast("Failed to generated exam:", { description: response.error });
-      // console.error(response.error);
-    } else {
-      toast("Generating exam questions soon!", {
-        description: `Please wait 1-2 minutes to see your new exam in your "Saved Exams" Tab. You may have to refresh the page.`,
+    if (parseInt(questionCount) > 10) {
+      toast("You can request a max of 10 questions per exam.");
+      return;
+    }
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      return redirect("/sign-in");
+    }
+    const { data } = await supabase
+      .from("mock_exams")
+      .select("exam_name")
+      .eq("user_uid", user.id);
+    if (data && data.length >= 3) {
+      toast("You can only save up to 3 exams at a time", {
+        description: "Delete an existing exam to generate a new one",
       });
-      setIsGenerateDisabled(false);
+      return;
+    } else {
+      setIsGenerateDisabled(true);
+      toast("Submitting request...");
+      const formData = new FormData();
+      formData.append(
+        "notes",
+        notes +
+          "Please include 4 options for each question, with one option being the correct answer"
+      );
+      formData.append("examName", examName);
+      formData.append("questionCount", questionCount);
+
+      const response = await addExam(formData); // Use addExam function here
+      if (response?.error) {
+        toast("Failed to generated exam:", { description: response.error });
+        // console.error(response.error);
+      } else {
+        toast("Generating exam questions soon!", {
+          description: `Please wait 1-2 minutes to see your new exam in your "Saved Exams" Tab. You may have to refresh the page.`,
+        });
+        setIsGenerateDisabled(false);
+      }
     }
   };
   // setTimeout(() => {
@@ -127,31 +173,8 @@ export default function MockExam() {
       );
     }
   };
-  useEffect(() => {
-    const fetchMockExam = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) {
-        return redirect("/sign-in");
-      }
-      const { data, error } = await supabase
-        .from("mock_exams")
-        .select("*")
-        .eq("user_uid", user?.id);
 
-      if (data) {
-        // console.log(data);
-        setExams(data);
-      } else if (error) {
-        console.error("Error fetching mock exam sets:", error);
-      }
-    };
-
-    fetchMockExam();
-  }, [supabase]);
-
-  const deleteExam = async (exam_name: any) => {
+  const handleDelete = async (examUID: any) => {
     const supabase = createClient();
     const {
       data: { user },
@@ -162,14 +185,17 @@ export default function MockExam() {
     const { error } = await supabase
       .from("mock_exams")
       .delete()
-      .eq("exam_name", exam_name)
-      .eq("user_uid", user.id);
+      .eq("exam_uid", examUID);
     if (error) {
       console.error("Error deleting event:", error);
     } else {
       toast("Exam deleted!", {
         // description: `"${event.title}: ${event.description}"`,
       });
+      setExams((prevExams) =>
+        prevExams.filter((exam) => exam.exam_uid !== examUID)
+      );
+
       // setIsDialogOpen(false);
       // fetchUserAndEvents();
     }
@@ -388,18 +414,6 @@ export default function MockExam() {
                       </AccordionTrigger>
                       <AccordionContent className="pt-4 border-t">
                         <div className="px-4 flex justify-between">
-                          <section className="flex flex-col flex-1 gap-1">
-                            <Button
-                              className="w-fit flex px-4 h-8"
-                              onClick={() => {
-                                setIsDialogOpen(true);
-                                setExamNameNonform(exam.exam_name);
-                                getExamQuestions(exam.exam_uid);
-                              }}
-                            >
-                              Start Exam
-                            </Button>
-                          </section>
                           {exam.created_on && (
                             <section className="flex flex-col flex-1 gap-1">
                               <h4>
@@ -428,8 +442,42 @@ export default function MockExam() {
                               </h4>
                             </section>
                           )}
+                          <section className="flex flex-col flex-1 gap-1 grow justify-center">
+                            <Button
+                              className="w-fit flex px-4 h-8"
+                              onClick={() => {
+                                setIsDialogOpen(true);
+                                setExamNameNonform(exam.exam_name);
+                                getExamQuestions(exam.exam_uid);
+                              }}
+                            >
+                              Start Exam
+                            </Button>
+                          </section>
 
-                          <section></section>
+                          {/* <Button> */}
+                          <Popover>
+                            <PopoverTrigger className="flex h-fit">
+                              {" "}
+                              <CircleX
+                                className="hover:text-red-500 cursor-pointer"
+                                onClick={() => {
+                                  console.log(exam.exam_uid);
+                                }}
+                              />
+                            </PopoverTrigger>
+                            <PopoverContent
+                              onClick={() => handleDelete(exam.exam_uid)}
+                              className="w-fit text-red-600 cursor-pointer"
+                            >
+                              <p>Confirm Delete</p>
+                              <p className="text-sm text-muted-foreground">
+                                This action is undoable
+                              </p>
+                            </PopoverContent>
+                          </Popover>
+
+                          {/* </Button> */}
                         </div>
                       </AccordionContent>
                     </AccordionItem>
@@ -524,11 +572,11 @@ export default function MockExam() {
                     Number of Questions
                   </Label>
                   <Input
-                    type="text"
+                    type="number"
                     id="questionCount"
                     name="questionCount"
-                    placeholder="10"
-                    maxLength={2}
+                    placeholder="e.g. 4 or 5 for a short quiz"
+                    max={10}
                     value={questionCount}
                     onChange={(e) => setQuestionCount(e.target.value)}
                     required
