@@ -47,7 +47,7 @@ export const addFlashcards = async (formData: FormData) => {
   const flashcards = await response.json();
 
   // Save flashcards to Supabase
-  const { error: flashcardsError, data: flashcardsData} = await supabase
+  const { error: flashcardsError, data: flashcardsData } = await supabase
     .from("flashcards")
     .insert(
       flashcards.map((card: any) => ({
@@ -56,17 +56,14 @@ export const addFlashcards = async (formData: FormData) => {
         user_uid: user.id,
         set_name: setName,
       }))
-
-  )
-  .select();
+    )
+    .select();
 
   // Save set to Supabase
-  const { error: setError} = await supabase
-    .from("flashcard_set")
-    .insert({
-      notes,
-      set_name: setName,
-      user_uid: user.id,
+  const { error: setError } = await supabase.from("flashcard_set").insert({
+    notes,
+    set_name: setName,
+    user_uid: user.id,
   });
 
   if (flashcardsError) {
@@ -140,31 +137,9 @@ export const addExam = async (formData: FormData) => {
       options: question.options,
     }))
   );
-  // Save exam set details to Supabase
-  // const { error: setError } = await supabase.from("exam_set").insert({
-  //   notes,
-  //   exam_name: examName,
-  //   user_uid: user.id,
-  // });
   if (examError) {
-    return encodedRedirect(
-      "error",
-      "/verified/mock-exams",
-      examError.message
-    );
+    return encodedRedirect("error", "/verified/mock-exams", examError.message);
   }
-  // if (setError) {
-  //   return encodedRedirect(
-  //     "error",
-  //     "/verified/exams/generate",
-  //     setError.message
-  //   );
-  // }
-  return encodedRedirect(
-    "success",
-    "/verified/mock-exams",
-    "Exam generated and saved successfully!"
-  );
 };
 
 export const addSuggestionAction = async (formData: FormData) => {

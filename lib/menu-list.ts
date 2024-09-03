@@ -9,6 +9,8 @@ import {
   Calendar,
   LibraryBig,
   NotebookText,
+  CircleDollarSign,
+  User,
 } from "lucide-react";
 
 type Submenu = {
@@ -92,10 +94,17 @@ export function getMenuList(pathname: string): Group[] {
         //   submenus: [],
         // },
         {
-          href: "/verified/account",
-          label: "Account",
-          active: pathname.includes("/account"),
-          icon: Settings,
+          href: "/verified/settings/account-details",
+          label: "Account Details",
+          active: pathname.includes("/account-details"),
+          icon: User,
+          submenus: [],
+        },
+        {
+          href: "/verified/settings/my-subscription",
+          label: "My Subscription",
+          active: pathname.includes("/my-subscription"),
+          icon: CircleDollarSign,
           submenus: [],
         },
       ],

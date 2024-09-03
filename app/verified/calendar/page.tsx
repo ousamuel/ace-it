@@ -64,7 +64,7 @@ export default function Calendar({ searchParams }: { searchParams: Message }) {
     allDay: false,
     timeStart: "",
     timeEnd: "",
-    type: "reminder",
+    type: "exam",
   });
   const [isLoading, setIsLoading] = useState(true);
 
@@ -106,7 +106,7 @@ export default function Calendar({ searchParams }: { searchParams: Message }) {
       allDay: false,
       timeStart: "",
       timeEnd: "",
-      type: "reminder",
+      type: "exam",
     });
     setIsAllDay(false);
   };
@@ -203,8 +203,10 @@ export default function Calendar({ searchParams }: { searchParams: Message }) {
     e.preventDefault();
     const { title, description, date, allDay, timeStart, timeEnd, type } =
       formData;
-    if (!title) {
-      toast("Missing field: Title");
+    if (!title || !description) {
+      toast("Missing fields:", {
+        description: `${!title && "Title"} ${!description && "Description"}`,
+      });
       return;
     }
     if (!allDay && (!timeStart || !timeEnd)) {
@@ -237,10 +239,13 @@ export default function Calendar({ searchParams }: { searchParams: Message }) {
       console.error("Error adding event:", error);
     } else {
       toast(
-        `Event added on ${selectedDate?.substring(5, 7)}/${selectedDate?.substring(8, 10)}/${selectedDate?.substring(0, 4)}
-        `,
+        `Event added for ${
+          selectedDate?.substring(5, 7)} /${
+          selectedDate?.substring(8, 10)} /
+          ${selectedDate?.substring(0, 4)}
+        }`,
         {
-          description: `"${title}" ${!allDay ? `from ${convertTimeTo12HourFormat(timeStart)} to ${convertTimeTo12HourFormat(timeEnd)}` : ""}`,
+          description: `${title} ${!allDay && `from ${convertTimeTo12HourFormat(timeStart)} to ${convertTimeTo12HourFormat(timeEnd)}`}`,
         }
       );
       // Update the events list and close the dialog
@@ -316,7 +321,7 @@ export default function Calendar({ searchParams }: { searchParams: Message }) {
     return (
       <div className={`flex flex-col gap-1 ${i > 0 && `border-t mt-2 pt-2`}`}>
         <section className="text-md flex justify-between">
-          <div className="flex flex-wrap gap-x-4 max-w-1/2 ">
+          <div className="flex gap-4">
             {pinnedOpen && (
               <p className="whitespace-nowrap flex items-center">
                 {event.date?.substring(5, 7)}/{event.date?.substring(8, 10)}/
@@ -328,7 +333,7 @@ export default function Calendar({ searchParams }: { searchParams: Message }) {
                 <Badge>{event.type.toUpperCase()} </Badge>
               </div>
             ) : (
-              <div className="flex flex-wrap gap-x-2">
+              <div className="flex gap-2">
                 <Badge>{event.type.toUpperCase()} </Badge>
                 <p className="whitespace-nowrap flex items-center">
                   {convertTimeTo12HourFormat(event.time_start)}
@@ -420,6 +425,10 @@ export default function Calendar({ searchParams }: { searchParams: Message }) {
             <BreadcrumbLink asChild>
               <Link href="/">Home</Link>
             </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>Contents</BreadcrumbPage>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
@@ -562,7 +571,7 @@ export default function Calendar({ searchParams }: { searchParams: Message }) {
                 >
                   <div className="flex flex-col md:flex-row gap-4">
                     <section className="flex flex-1 flex-col gap-4">
-                      <Label htmlFor="title">Title *</Label>
+                      <Label htmlFor="title">Title</Label>
                       <Input
                         type="text"
                         name="title"
@@ -651,7 +660,6 @@ export default function Calendar({ searchParams }: { searchParams: Message }) {
                             required
                             className="border rounded p-2"
                           >
-                            <option value="reminder">Reminder</option>
                             <option value="exam">Exam</option>
                             <option value="assignment">Assignment</option>
                             <option value="personal">Personal</option>

@@ -24,8 +24,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-
+} from "@/components/ui/dialog";
 
 import Link from "next/link";
 export default async function Home({
@@ -98,35 +97,38 @@ export default async function Home({
         <div className="flex py-5">
           <Dialog>
             <DialogTrigger>
-              <button className="px-4 py-2 font-bold text-white bg-green-700 rounded hover:bg-green-500 cursor-pointer">
+              <p className="px-4 py-2 font-bold text-white bg-green-700 rounded hover:bg-green-500 cursor-pointer">
                 Leave a Suggestion!
-              </button>
+              </p>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                  <form className="flex flex-col w-full p-4 gap-2 [&>input]:mb-4">
+                <form className="flex flex-col w-full p-4 gap-2 [&>input]:mb-4">
                   <DialogTitle>Leave a Suggestion!</DialogTitle>
-                    <div className="flex flex-col gap-2 [&>input]:mb-3 mt-8">
-                      <Label className="text-md text-muted-foreground" htmlFor="suggestion">
-                        If you have any suggestions or features you would like to see,
-                        please let us know here!
-                      </Label>
-                      <Input
-                        type="text"
-                        name="suggestion"
-                        placeholder="E.G. 'I would like to see an interactive calendar' "
-                        // minLength={6}
-                        required
-                      />
-                      <SubmitButton
-                        formAction={addSuggestionAction}
-                        pendingText="Submitting..."
-                      >
-                        Submit
-                      </SubmitButton>
-                      <FormMessage message={searchParams} />
-                    </div>
-                  </form>
+                  <div className="flex flex-col gap-2 [&>input]:mb-3 mt-8">
+                    <Label
+                      className="text-md text-muted-foreground"
+                      htmlFor="suggestion"
+                    >
+                      If you have any suggestions or features you would like to
+                      see, please let us know here!
+                    </Label>
+                    <Input
+                      type="text"
+                      name="suggestion"
+                      placeholder="E.G. 'I would like to see an interactive calendar' "
+                      // minLength={6}
+                      required
+                    />
+                    <SubmitButton
+                      formAction={addSuggestionAction}
+                      pendingText="Submitting..."
+                    >
+                      Submit
+                    </SubmitButton>
+                    <FormMessage message={searchParams} />
+                  </div>
+                </form>
               </DialogHeader>
             </DialogContent>
           </Dialog>

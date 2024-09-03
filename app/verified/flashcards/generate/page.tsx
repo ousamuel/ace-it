@@ -75,6 +75,10 @@ export default function GenerateFlashcards({
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
+            <BreadcrumbPage>Contents</BreadcrumbPage>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
             <BreadcrumbPage>Flashcards</BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
