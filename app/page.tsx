@@ -27,7 +27,9 @@ export default async function Index() {
       <div className="flex flex-col gap-5 justify-center items-center pt-0">
         <p className="text-4xl">Features</p>
         <div className="max-w-7xl mx-auto p-4 grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+          
           {/* Card 1: Thinking AI Flashcard */}
+          <Link href="/sign-up">
           <div className="border border-zinc-500 shadow-lg rounded-lg overflow-hidden transition-transform transform hover:scale-110 hover:shadow-green-500/50 duration-300">
             <div className="p-6">
               <h3 className="text-xl font-semibold text-green-500 mb-4">
@@ -39,8 +41,10 @@ export default async function Index() {
               </p>
             </div>
           </div>
+          </Link>
 
           {/* Card 2: Practice Exam & Calendar */}
+          <Link href="/sign-up">
           <div className="border border-zinc-500 shadow-lg rounded-lg overflow-hidden transition-transform transform hover:scale-110 hover:shadow-green-500/50 duration-300">
             <div className="p-6">
               <h3 className="text-xl font-semibold text-green-500 mb-4">
@@ -52,8 +56,10 @@ export default async function Index() {
               </p>
             </div>
           </div>
-
+          </Link>
+          
           {/* Card 3: Chatbot Convos Quizzing & Clarifications */}
+          <Link href="/sign-up">
           <div className="border border-zinc-500 shadow-lg rounded-lg overflow-hidden transition-transform transform hover:scale-110 hover:shadow-green-500/50 duration-300">
             <div className="p-6">
               <h3 className="text-xl font-semibold text-green-500 mb-4">
@@ -66,6 +72,8 @@ export default async function Index() {
               </p>
             </div>
           </div>
+          </Link>
+          
         </div>
       </div>{" "}
     </div>

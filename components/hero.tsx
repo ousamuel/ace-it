@@ -23,7 +23,7 @@ export default function Header() {
         hover:shadow-xl hover:shadow-green-500/50 
         transition-all duration-300 ease-in-out transform`}
       >
-        <Link href="/sign-up">Join the Waitlist</Link>
+        <Link href="/sign-up">Try it Now</Link>
       </button>
       {/* <div className="w-full p-[1px] bg-gradient-to-r from-transparent via-foreground/10 to-transparent my-8" /> */}
     </div>

@@ -25,10 +25,7 @@ export default async function Waitlist({
   if (!user) {
     return redirect("/sign-in");
   }
-  if (
-    user.email == "gtuyishime02@gmail.com" ||
-    user.email == "coinchip167@gmail.com"
-  ) {
+  else {
     return redirect("/verified");
   }
 
@@ -46,7 +43,7 @@ export default async function Waitlist({
         </div>
       </nav>
       <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl my-4">
-        Thanks for joining our waitlist!
+        Thanks for joining our priotity list!
       </h1>
       <h3 className="sm:w-3/5 scroll-m-20 text-2xl font-semibold tracking-tight">
         Our app will soon be out of development and ready to save your grades!
