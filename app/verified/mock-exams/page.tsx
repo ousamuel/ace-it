@@ -189,7 +189,7 @@ export default function MockExam() {
           </h1>
           <div className="flex flex-col gap-4 pt-4">
             <Accordion type="multiple" className="flex flex-col gap-4">
-              {exams.length < 0 ? (
+              {exams.length > 0 ? (
                 exams.map((exam: any, i: number) => (
                   <Card className="w-full">
                     <AccordionItem
