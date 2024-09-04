@@ -236,6 +236,24 @@ export default function MockExam() {
   const capitalizeFirstLetter = (str: string) => {
     return str.charAt(0).toUpperCase() + str.slice(1);
   };
+  const formatDateObj = (date: string) => {
+    let month = "";
+    let day = "";
+    let year = date.substring(0, 4);
+    if (parseInt(date.substring(5, 7)) >= 10) {
+      month = date.substring(5, 7);
+    } else {
+      month = date.substring(6, 7);
+    }
+
+    if (parseInt(date.substring(8, 10)) >= 10) {
+      day = date.substring(8, 10);
+    } else {
+      day = date.substring(9, 10);
+    }
+    return `${month}/${day}/${year}`;
+  };
+
   return (
     <ContentLayout title="Exam Generator">
       <Breadcrumb>
@@ -414,34 +432,28 @@ export default function MockExam() {
                       </AccordionTrigger>
                       <AccordionContent className="pt-4 border-t">
                         <div className="px-4 flex justify-between">
-                          {exam.created_on && (
-                            <section className="flex flex-col flex-1 gap-1">
-                              <h4>
-                                Created on:{" "}
-                                {parseInt(exam.created_on.substring(5, 7)) >= 10
-                                  ? exam.created_on.substring(5, 7)
-                                  : exam.created_on.substring(6, 7)}
-                                /
-                                {parseInt(exam.created_on.substring(8, 10)) >=
-                                10
-                                  ? exam.created_on.substring(8, 10)
-                                  : exam.created_on.substring(9, 10)}
-                                /{exam.created_on?.substring(0, 4)}
-                              </h4>
+                          <section className="flex flex-col flex-1 gap-1">
+                            <h4>
+                              Created on:{" "}
+                              {exam.created_on
+                                ? formatDateObj(exam.created_on)
+                                : "N/A"}
+                            </h4>
+                            <h4>
+                              Last taken on:{" "}
+                              {exam.last_taken
+                                ? formatDateObj(exam.last_taken)
+                                : "N/A"}
+                            </h4>
 
-                              <h4>
-                                Last taken on:{" "}
-                                {exam.last_taken ? exam.last_taken : "N/A"}
-                              </h4>
-                              <h4 className={exam.previous_score ? "" : ""}>
-                                {" "}
-                                Previous score:{" "}
-                                {exam.previous_score
-                                  ? exam.previous_score
-                                  : "N/A"}
-                              </h4>
-                            </section>
-                          )}
+                            <h4 className={exam.previous_score ? "" : ""}>
+                              {" "}
+                              Previous score:{" "}
+                              {exam.previous_score
+                                ? exam.previous_score
+                                : "N/A"}
+                            </h4>
+                          </section>
                           <section className="flex flex-col flex-1 gap-1 grow justify-center">
                             <Button
                               className="w-fit flex px-4 h-8"
@@ -550,7 +562,7 @@ export default function MockExam() {
                     type="text"
                     id="examName"
                     name="examName"
-                    placeholder="E.G. Organic Chemistry"
+                    placeholder="e.g. Organic Chemistry"
                     value={examName}
                     onChange={(e) => setExamName(e.target.value)}
                     required
@@ -575,7 +587,7 @@ export default function MockExam() {
                     type="number"
                     id="questionCount"
                     name="questionCount"
-                    placeholder="e.g. 4 or 5 for a short quiz"
+                    placeholder="e.g. Choose from 1-10"
                     max={10}
                     value={questionCount}
                     onChange={(e) => setQuestionCount(e.target.value)}
@@ -588,6 +600,12 @@ export default function MockExam() {
                   >
                     Generate Exam
                   </Button>
+                  <p className="text-sm text-muted-foreground">
+                    Please note that while our AI strives for accuracy, it may
+                    occasionally produce incorrect information, so always verify
+                    critical details.
+                  </p>
+
                   {/* <FormMessage message={searchParams} /> */}
                 </div>
               </form>

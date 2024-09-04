@@ -235,7 +235,33 @@ export const addEventAction = async (formData: FormData) => {
     "Event added successfully"
   );
 };
-
+export const updateAccountAction = async (formData: FormData) => {
+  const email = formData.get("email")?.toString();
+  const firstName = formData.get("firstName")?.toString();
+  const lastName = formData.get("lastName")?.toString();
+  const supabase = createClient();
+  // const origin = headers().get("origin");
+  if (!email) {
+    return { error: "Email is required" };
+  }
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return;
+  }
+  // added custom password confirmation to ensure no typos
+  const { error } = await supabase
+    .from("users")
+    .update({ email: email, first_name: firstName, last_name: lastName })
+    .eq("user_uid", user.id);
+  if (error) {
+    console.log(error)
+    return { error: "Error updating details" };
+  } else {
+    return { success: "Successfully updated account details" };
+  }
+};
 export const signUpAction = async (formData: FormData) => {
   const email = formData.get("email")?.toString();
   const password = formData.get("password")?.toString();
@@ -250,7 +276,6 @@ export const signUpAction = async (formData: FormData) => {
     return encodedRedirect("error", "/sign-up", "Passwords are not matching");
   }
   // added custom password confirmation to ensure no typos
-
   const { error } = await supabase.auth.signUp({
     email,
     password,
