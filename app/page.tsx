@@ -42,7 +42,7 @@ export default async function Index() {
         </div>
       </nav>
       <Hero />
-      <section className="bg-accent flex flex-col xl:flex-row p-4 xl:p-6 rounded-sm mb-10">
+      <section className="bg-accent flex flex-col xl:flex-row p-4 px-2 xl:p-6 rounded-sm mb-10">
         <div className="w-full xl:w-1/3 p-3 flex flex-col justify-center xl:pb-14">
           <h3 className=" scroll-m-20 text-2xl font-semibold tracking-tight">
             Why use AceIT?
@@ -73,7 +73,7 @@ export default async function Index() {
             </li>
           </ul>
         </div>
-        <div className="w-full xl:w-2/3 mx-auto px-10 flex flex-col justify-center">
+        <div className="w-full xl:w-2/3 mx-auto flex flex-col justify-center">
           <Carousel>
             <CarouselContent className="">
               {images.map((image, index) => (
@@ -91,8 +91,8 @@ export default async function Index() {
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselPrevious />
-            <CarouselNext />
+            <CarouselPrevious className="left-4 bg-foreground text-background" />
+            <CarouselNext className="right-4 bg-foreground text-background" />
           </Carousel>
         </div>
       </section>
