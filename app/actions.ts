@@ -46,47 +46,48 @@ export const addFlashcards = async (formData: FormData) => {
 
   const flashcards = await response.json();
 
-  // Save flashcards to Supabase
-  const { error: flashcardsError, data: flashcardsData } = await supabase
-    .from("flashcards")
-    .insert(
-      flashcards.map((card: any) => ({
-        question: card.front,
-        answer: card.back,
-        user_uid: user.id,
-        set_name: setName,
-      }))
-    )
-    .select();
-
   // Save set to Supabase
   const { error: setError } = await supabase.from("flashcard_set").insert({
     notes,
     set_name: setName,
     user_uid: user.id,
   });
-
-  if (flashcardsError) {
-    return encodedRedirect(
-      "error",
-      "/verified/flashcards/generate",
-      flashcardsError.message
-    );
-  }
-
+  // Await successful set save
   if (setError) {
-    return encodedRedirect(
-      "error",
-      "/verified/flashcards/generate",
-      setError.message
-    );
-  }
+    return { error: setError };
+    return { error: "Error saving set" + setError };
+  } else {
+    // get newly generated uuid for set
+    const { data, error: fetchIdError } = await supabase
+      .from("flashcard_set")
+      .select("set_uid")
+      .eq("user_uid", user.id)
+      .eq("set_name", setName);
 
-  return encodedRedirect(
-    "success",
-    "/verified/flashcards/generate",
-    "Flashcards generated and saved successfully!"
-  );
+    if (!fetchIdError) {
+      // set foreign key of individual flashcards as the newly generated uuid + rest of the fields
+      const { error: flashcardsError, data: flashcardsData } = await supabase
+        .from("flashcards")
+        .insert(
+          flashcards.map((card: any) => ({
+            question: card.front,
+            answer: card.back,
+            user_uid: user.id,
+            set_name: setName,
+            set_uid: data[0].set_uid,
+          }))
+        );
+      if (!flashcardsError) {
+        return { success: "Successfully saved flashcards" };
+      } else {
+        return {
+          error: "Error saving individual flashcards" + flashcardsError,
+        };
+      }
+    } else {
+      return { error: "Error fetching new UUID" + fetchIdError };
+    }
+  }
 };
 export const addExam = async (formData: FormData) => {
   const supabase = createClient();
@@ -111,7 +112,6 @@ export const addExam = async (formData: FormData) => {
   }
   const origin = headers().get("origin");
   const apiUrl = `${origin}/api/generate-exam`;
-
   const response = await fetch(apiUrl, {
     method: "POST",
     headers: {
@@ -137,7 +137,7 @@ export const addExam = async (formData: FormData) => {
   });
 
   if (examError) {
-    return;
+    return { error: "Error saving exam set" + examError };
   } else {
     const { data, error: examIdError } = await supabase
       .from("mock_exams")
@@ -256,7 +256,7 @@ export const updateAccountAction = async (formData: FormData) => {
     .update({ email: email, first_name: firstName, last_name: lastName })
     .eq("user_uid", user.id);
   if (error) {
-    console.log(error)
+    console.log(error);
     return { error: "Error updating details" };
   } else {
     return { success: "Successfully updated account details" };

@@ -21,9 +21,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import {
-  Box,
-} from "@mui/material";
+import { Box } from "@mui/material";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -35,11 +33,7 @@ import {
 import Flashcard from "./Flashcard";
 import Flashcard_v2 from "./Flashcard_v2";
 
-export default function GenerateFlashcards({
-  searchParams,
-}: {
-  searchParams: Message;
-}) {
+export default function GenerateFlashcards() {
   const supabase = createClient();
   const router = useRouter();
   const [setName, setSetName] = useState("");
@@ -91,54 +85,54 @@ export default function GenerateFlashcards({
           Create custom flashcards to enhance your studying!
         </h3>
 
-            <form className="flex flex-col w-full max-w-md p-4 gap-2 mx-auto border border-green-500/50 rounded-lg" 
-                onSubmit={handleSubmit}>
-                <div className="flex flex-col gap-2 mt-8 ">
-                    <Label htmlFor="setName">Flashcard Set Name</Label>
-                    <Input
-                        type="text"
-                        id="setName"
-                        name="setName"
-                        placeholder="E.G. English Exam"
-                        value={setName}
-                        onChange={(e) => setSetName(e.target.value)}
-                        required
-                    />
-                    <Label htmlFor="notes">Notes</Label>
-                    <textarea
-                        id="notes"
-                        name="notes"
-                        className="w-full p-2 border rounded"
-                        placeholder="Enter any topics or notes you would like to study."
-                        value={notes}
-                        onChange={(e) => setNotes(e.target.value)}
-                        rows={4}
-                        required
-                    />
-                    <Label htmlFor="setName">Number of Flashcards</Label>
-                    <Input
-                        type="text"
-                        id="setNumber"
-                        name="setNumber"
-                        placeholder="1-30 flashcards"
-                        value={number}
-                        onChange={(e) => setNumber(e.target.value)}
-                        required
-                    />
-                    <button
-                        type="submit"
-                        className="px-4 py-2 font-bold text-white bg-green-700 rounded hover:bg-green-500 cursor-pointer"
-                    >
-                        Generate Flashcards
-                    </button>
-                </div>
-            </form>
-            <h3 className="text-2xl font-semibold tracking-tight">
-                My Flashcards
-            </h3>
-            
-            <Flashcard_v2 shouldFetch={shouldFetch} />
-        </div>
-       </ContentLayout>
-    );
+        <form
+          className="flex flex-col w-full max-w-md p-4 gap-2 mx-auto border border-green-500/50 rounded-lg"
+          onSubmit={handleSubmit}
+        >
+          <div className="flex flex-col gap-2 mt-8 ">
+            <Label htmlFor="setName">Flashcard Set Name</Label>
+            <Input
+              type="text"
+              id="setName"
+              name="setName"
+              placeholder="E.G. English Exam"
+              value={setName}
+              onChange={(e) => setSetName(e.target.value)}
+              required
+            />
+            <Label htmlFor="notes">Notes</Label>
+            <textarea
+              id="notes"
+              name="notes"
+              className="w-full p-2 border rounded"
+              placeholder="Enter any topics or notes you would like to study."
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              rows={4}
+              required
+            />
+            <Label htmlFor="setName">Number of Flashcards</Label>
+            <Input
+              type="text"
+              id="setNumber"
+              name="setNumber"
+              placeholder="1-30 flashcards"
+              value={number}
+              onChange={(e) => setNumber(e.target.value)}
+              required
+            />
+            <button
+              type="submit"
+              className="px-4 py-2 font-bold text-white bg-green-700 rounded hover:bg-green-500 cursor-pointer"
+            >
+              Generate Flashcards
+            </button>
+          </div>
+        </form>
+        <h3 className="text-2xl font-semibold tracking-tight">My Flashcards</h3>
+
+        <Flashcard_v2 shouldFetch={shouldFetch} />
+      </div>
+    </ContentLayout>
+  );
 }

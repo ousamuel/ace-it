@@ -13,7 +13,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-export default function Flashcard_v2({ shouldFetch }: { shouldFetch: boolean }) {
+export default function Flashcard_v2({
+  shouldFetch,
+}: {
+  shouldFetch: boolean;
+}) {
   const supabase = createClient();
   const [flashcards, setFlashcards] = useState<any[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -22,68 +26,96 @@ export default function Flashcard_v2({ shouldFetch }: { shouldFetch: boolean }) 
 
   useEffect(() => {
     // if (shouldFetch) {
-      const fetchUserFlashcards = async () => {
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
+    const fetchUserFlashcards = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
 
-        if (!user) {
-          return redirect("/sign-in");
-        }
+      if (!user) {
+        return redirect("/sign-in");
+      }
 
-        const { data, error } = await supabase
-          .from("flashcards")
-          .select("*")
-          .eq("user_uid", user.id);
-        
-        setLoading(false);
+      const { data, error } = await supabase
+        .from("flashcards")
+        .select("*")
+        .eq("user_uid", user.id);
 
-        if (data) {
-          setFlashcards(data);
-        } else if (error) {
-          console.error("Error fetching flashcards:", error);
-        } else {
-          toast('Flashcards generated!')
-        }
-      };
+      setLoading(false);
 
-      fetchUserFlashcards();
+      if (data) {
+        setFlashcards(data);
+      } else if (error) {
+        console.error("Error fetching flashcards:", error);
+      } else {
+        toast("Flashcards generated!");
+      }
+    };
+
+    fetchUserFlashcards();
     // }
   }, [supabase, shouldFetch]);
 
   const deleteFlashcard = async (flashcard: any) => {
-    const { error } = await supabase
+    // see how many cards are left in the specific set
+    const { data, error: lastCardError } = await supabase
       .from("flashcards")
-      .delete()
-      .eq("id", flashcard.id);
-
-    if (error) {
-      console.error("Error deleting flashcard:", error);
+      .select("*")
+      .eq("set_uid", flashcard.set_uid);
+    if (lastCardError) {
+      return;
+    } else if (data.length <= 1) {
+      // if card is last one in the set, delete the entire set, not just the last card
+      const { error: deleteSetError } = await supabase
+        .from("flashcard_set")
+        .delete()
+        .eq("set_uid", flashcard.set_uid);
+      if (deleteSetError) {
+        console.log("Error deleting set:", deleteSetError);
+        return;
+      } else{
+        // rerender flashcards with all flashcards that are NOT part of the deleted set
+        setFlashcards((prevFlashcards) =>
+          prevFlashcards.filter((card) => card.set_uid !== flashcard.set_uid)
+        );
+        // Reset the currentIndex if it is out of bounds after deletion
+        setCurrentIndex((prevIndex) =>
+          prevIndex >= flashcards.length - 1 ? 0 : prevIndex
+        );
+      }
     } else {
-      toast("Flashcard deleted!", {
-        description: `"${flashcard.question}: ${flashcard.answer}"`,
-      });
-      // Remove the deleted flashcard from the state
-      setFlashcards((prevFlashcards) =>
-        prevFlashcards.filter((card) => card.id !== flashcard.id)
-      );
-      // Reset the currentIndex if it is out of bounds after deletion
-      setCurrentIndex((prevIndex) => 
-        prevIndex >= flashcards.length - 1 ? 0 : prevIndex
-      );
+      const { error: deleteSingleFlashcardError } = await supabase
+        .from("flashcards")
+        .delete()
+        .eq("id", flashcard.id);
+
+      if (deleteSingleFlashcardError) {
+        console.error("Error deleting flashcard:", deleteSingleFlashcardError);
+      } else {
+        toast("Flashcard deleted!", {
+          description: `"${flashcard.question}: ${flashcard.answer}"`,
+        });
+        // Remove the deleted flashcard from the state
+        setFlashcards((prevFlashcards) =>
+          prevFlashcards.filter((card) => card.id !== flashcard.id)
+        );
+        // Reset the currentIndex if it is out of bounds after deletion
+        setCurrentIndex((prevIndex) =>
+          prevIndex >= flashcards.length - 1 ? 0 : prevIndex
+        );
+      }
     }
   };
 
-  const clearFlashcards = async (flashcard: any) =>{
+  const clearFlashcards = async (flashcard: any) => {
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
     if (user) {
-    const { error } = await supabase
-      .from("flashcards")
-      .delete()
-      .eq("user_uid", user.id);
+      const { error } = await supabase
+        .from("flashcards")
+        .delete()
+        .eq("user_uid", user.id);
 
       if (error) {
         console.error("Error deleting flashcards:", error);
@@ -94,7 +126,7 @@ export default function Flashcard_v2({ shouldFetch }: { shouldFetch: boolean }) 
         toast("All flashcards cleared!");
       }
     }
-};
+  };
 
   const handleNext = () => {
     setFlipped(false); // Reset flip state when moving to the next card
@@ -127,23 +159,24 @@ export default function Flashcard_v2({ shouldFetch }: { shouldFetch: boolean }) 
     };
   }, [flashcards]);
 
-  if (loading){
+  if (loading) {
     return <p className="text-zinc-500">Flashcards loading...</p>;
   }
   if (flashcards.length === 0) {
     return <p className="text-zinc-500">No flashcards yet...</p>;
   }
 
-  const currentCard = flashcards[currentIndex];
+  let currentCard = flashcards[currentIndex];
 
   return (
     <div className="text-center">
       <p className="text-md pb-5 text-zinc-500">
-        Use the left and right arrows to navigate through the flashcards. Click on the card or use the "Flip" button to view the answer.
+        Use the left and right arrows to navigate through the flashcards. Click
+        on the card or use the "Flip" button to view the answer.
       </p>
       <div className="flex flex-row justify-center items-center gap-2 py-2">
         <p className="text-md">
-            {currentIndex + 1}/{flashcards.length}
+          {currentIndex + 1}/{flashcards.length}
         </p>
         <DropdownMenu>
           <DropdownMenuTrigger>
@@ -157,7 +190,9 @@ export default function Flashcard_v2({ shouldFetch }: { shouldFetch: boolean }) 
             <DropdownMenuItem
               id="delete-card"
               className="text-red-500 hover:bg-red-200/20"
-              onClick={() => { deleteFlashcard(currentCard)}}
+              onClick={() => {
+                deleteFlashcard(currentCard);
+              }}
             >
               Delete
             </DropdownMenuItem>
@@ -165,7 +200,9 @@ export default function Flashcard_v2({ shouldFetch }: { shouldFetch: boolean }) 
             <DropdownMenuItem
               id="clear-card"
               className="text-red-500 hover:bg-red-800"
-              onClick={() => { clearFlashcards(currentCard)}}
+              onClick={() => {
+                clearFlashcards(currentCard);
+              }}
             >
               Clear
             </DropdownMenuItem>
@@ -179,8 +216,8 @@ export default function Flashcard_v2({ shouldFetch }: { shouldFetch: boolean }) 
               borderRadius: "20px",
               border: "1px rgba(34, 197, 94, 0.5) solid",
               perspective: "1000px",
-              width: {xs:"300px",lg:"500px", xl:"800px"},
-              height: {xs:"200px",lg:"300px", xl:"500px"},
+              width: { xs: "300px", lg: "500px", xl: "800px" },
+              height: { xs: "200px", lg: "300px", xl: "500px" },
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -225,31 +262,29 @@ export default function Flashcard_v2({ shouldFetch }: { shouldFetch: boolean }) 
             </div>
           </Box>
         </div>
-
       </div>
       <div className="flex justify-center items-center gap-4 py-5">
+        <button
+          onClick={handlePrev}
+          className="px-4 py-2 font-bold text-white bg-green-700 rounded hover:bg-green-500 cursor-pointer"
+        >
+          &lt;
+        </button>
+        <div className="flex flex-col gap-1">
           <button
-              onClick={handlePrev}
-              className="px-4 py-2 font-bold text-white bg-green-700 rounded hover:bg-green-500 cursor-pointer"
-            >
-                &lt;
+            onClick={handleCardClick}
+            className="px-4 py-2 font-bold text-white bg-green-700 rounded hover:bg-green-500 cursor-pointer"
+          >
+            Flip
           </button>
-          <div className="flex flex-col gap-1">
-            <button
-                onClick={handleCardClick}
-                  className="px-4 py-2 font-bold text-white bg-green-700 rounded hover:bg-green-500 cursor-pointer"
-              >
-                Flip
-            </button>
-          </div>
-            <button
-                onClick={handleNext}
-                  className="px-4 py-2 font-bold text-white bg-green-700 rounded hover:bg-green-500 cursor-pointer"
-              >
-                &gt;
-              </button>
-          
         </div>
+        <button
+          onClick={handleNext}
+          className="px-4 py-2 font-bold text-white bg-green-700 rounded hover:bg-green-500 cursor-pointer"
+        >
+          &gt;
+        </button>
+      </div>
     </div>
   );
 }
