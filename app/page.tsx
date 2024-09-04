@@ -96,6 +96,15 @@ export default async function Index() {
           </Carousel>
         </div>
       </section>
+      <Separator />
+      <footer className="p-6 flex justify-center">
+        <Link
+          href="/privacy-policy"
+          className="hover:underline text-muted-foreground"
+        >
+          @AceIT 2024 Privacy Policy
+        </Link>
+      </footer>
       {/* <section className="flex flex-col gap-2 md:gap-5 justify-center items-center pt-0">
         <p className="text-2xl">Features</p>
 

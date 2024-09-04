@@ -11,6 +11,7 @@ import {
   NotebookText,
   CircleDollarSign,
   User,
+  ShieldCheck,
 } from "lucide-react";
 
 type Submenu = {
@@ -105,6 +106,13 @@ export function getMenuList(pathname: string): Group[] {
           label: "My Subscription",
           active: pathname.includes("/my-subscription"),
           icon: CircleDollarSign,
+          submenus: [],
+        },
+        {
+          href: "/verified/settings/privacy-policy",
+          label: "Privacy Policy",
+          active: pathname.includes("/privacy-policy"),
+          icon: ShieldCheck,
           submenus: [],
         },
       ],
