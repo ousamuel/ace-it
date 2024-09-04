@@ -6,12 +6,6 @@ This project is a study app designed to help users improve their study habits an
 
 Collaboration with: <a href="https://github.com/T-Godwins">Godwins Tuyishime</a>
 
-## Check it out here [https://ace-it.vercel.app/](https://ace-it.vercel.app/)
-
-![mock-exams](/public/aceit-exams.png)
-![flashcards](/public/aceit-flashcards.png)
-![calendar](/public/aceit-calendar.png)
-
 ## Features
 
 - **AI Mock Exams**: Generate practice exams for your specific needs to put your knowledge to the test.
@@ -23,3 +17,10 @@ Collaboration with: <a href="https://github.com/T-Godwins">Godwins Tuyishime</a>
 
 - **Frontend**: Next.js, React.js, Tailwind, Shadcn UI.
 - **Backend**: Supabase + PostgreSQL for Auth and storage, OpenAI
+
+## Check it out here [https://ace-it.vercel.app/](https://ace-it.vercel.app/)
+
+![mock-exams](/public/aceit-exams.png)
+![flashcards](/public/aceit-flashcards.png)
+![calendar](/public/aceit-calendar.png)
+
