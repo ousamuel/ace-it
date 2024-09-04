@@ -59,8 +59,8 @@ export default function AccountDetails() {
       } else {
         setUserData(data);
         setFormData({
-          firstName: data["first_name"],
-          lastName: data["last_name"],
+          firstName: data["first_name"] || "",
+          lastName: data["last_name"] || "",
           email: data["email"],
         });
       }

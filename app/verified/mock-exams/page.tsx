@@ -10,17 +10,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { CircleX } from "lucide-react";
+import { CircleX, MessageCircleWarningIcon } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { createClient } from "@/utils/supabase/client";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { SubmitButton } from "@/components/submit-button";
-import { FormMessage } from "@/components/form-message";
 import { addExam } from "@/app/actions"; // Change this to the new addExam function
 import { redirect } from "next/navigation";
-import { Message } from "@/components/form-message";
-import { useRouter } from "next/navigation";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -47,14 +43,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getInstructionList } from "@/lib/mock-instructions";
 export default function MockExam() {
@@ -88,9 +77,7 @@ export default function MockExam() {
         .from("mock_exams")
         .select("*")
         .eq("user_uid", user?.id);
-
       if (data) {
-        // console.log(data);
         setExams(data);
       } else if (error) {
         console.error("Error fetching mock exam sets:", error);
@@ -142,7 +129,6 @@ export default function MockExam() {
       const response = await addExam(formData); // Use addExam function here
       if (response?.error) {
         toast("Failed to generated exam:", { description: response.error });
-        // console.error(response.error);
       } else {
         toast("Generating exam questions soon!", {
           description: `Please wait 1-2 minutes to see your new exam in your "Saved Exams" Tab. You may have to refresh the page.`,
@@ -151,9 +137,6 @@ export default function MockExam() {
       }
     }
   };
-  // setTimeout(() => {
-  //   setIsGenerateDisabled(false);
-  // }, 3000);
   const getExamQuestions = async (examUID: string) => {
     const {
       data: { user },
@@ -189,15 +172,10 @@ export default function MockExam() {
     if (error) {
       console.error("Error deleting event:", error);
     } else {
-      toast("Exam deleted!", {
-        // description: `"${event.title}: ${event.description}"`,
-      });
+      toast("Exam deleted!", {});
       setExams((prevExams) =>
         prevExams.filter((exam) => exam.exam_uid !== examUID)
       );
-
-      // setIsDialogOpen(false);
-      // fetchUserAndEvents();
     }
   };
   const handleCheckAnswers = async (examUID: string) => {
@@ -206,7 +184,6 @@ export default function MockExam() {
     let correctCount = 0;
 
     const updateExamScoreAndDate = async (previousScore: string) => {
-      // console.log(previousScore);
       const { error } = await supabase
         .from("mock_exams")
         .update({
@@ -245,7 +222,6 @@ export default function MockExam() {
     } else {
       month = date.substring(6, 7);
     }
-
     if (parseInt(date.substring(8, 10)) >= 10) {
       day = date.substring(8, 10);
     } else {
@@ -282,6 +258,13 @@ export default function MockExam() {
           <h1 className="text-xl font-extrabold tracking-tight lg:text-3xl">
             My Saved Exams
           </h1>
+          {(exams.length >= 30 || exams.length > 0) && (
+            <div className="my-5 bg-accent text-sm p-3 px-5 rounded-md text-foreground flex gap-3 items-center">
+              <MessageCircleWarningIcon size="16" strokeWidth={2} />
+              As a free subscriber, you are allowed to save up to 3 exams. You
+              currently have {exams.length} exams saved.
+            </div>
+          )}
           <div className="flex flex-col gap-4 pt-4">
             <Dialog
               open={isDialogOpen}

@@ -294,7 +294,7 @@ export const signUpAction = async (formData: FormData) => {
     //   "Thanks for signing up! Please check your email for a verification link.",
     // );
 
-    // return redirect("/verified");
+    return redirect("/verified");
     // changed this line to redirect b/c no need for verification
     // too hassling to do email verification b/c supabase only allows for 4 every hour
     // if app were to scale large enough + paid service, then I can add custom aws SMTP and renable email verification for safety
@@ -317,7 +317,7 @@ export const signInAction = async (formData: FormData) => {
     return encodedRedirect("error", "/sign-in", error.message);
   }
 
-  // return redirect("/verified");
+  return redirect("/verified");
   return redirect("/waitlist");
   // change back to /verified once site is actually ready and no more waitlist
 };

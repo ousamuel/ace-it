@@ -116,8 +116,8 @@ export default async function Home({
                     <Input
                       type="text"
                       name="suggestion"
-                      placeholder="E.G. 'I would like to see an interactive calendar' "
-                      // minLength={6}
+                      placeholder="E.G. 'I would like to see an interactive calendar' (Max 150 characters) "
+                      maxLength={150}
                       required
                     />
                     <SubmitButton

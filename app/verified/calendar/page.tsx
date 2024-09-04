@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import { ContentLayout } from "@/components/admin-panel/content-layout";
+import { InfoIcon, MessageCircleWarningIcon } from "lucide-react";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -714,6 +715,13 @@ export default function Calendar({ searchParams }: { searchParams: Message }) {
           </DialogContent>
         </Dialog>
       </div>
+      {(events.length >= 30 || true) && (
+        <div className="my-5 bg-accent text-sm p-3 px-5 rounded-md text-foreground flex gap-3 items-center">
+          <MessageCircleWarningIcon size="16" strokeWidth={2} />
+          As a free subscriber, you are allowed to save up to 30 events. You
+          currently have {events.length} events saved.
+        </div>
+      )}
     </ContentLayout>
   );
 }

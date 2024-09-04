@@ -36,6 +36,8 @@
     "autoprefixer": "10.4.17",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "date-fns": "^3.6.0",
+    "embla-carousel-react": "^8.2.1",
     "geist": "^1.2.1",
     "lucide-react": "^0.436.0",
     "next": "latest",
@@ -43,7 +45,9 @@
     "openai": "^4.57.0",
     "prettier": "^3.3.3",
     "react": "18.2.0",
+    "react-day-picker": "^8.10.1",
     "react-dom": "18.2.0",
+    "react-resizable-panels": "^2.1.2",
     "sonner": "^1.5.0",
     "uuid": "^10.0.0",
     "zustand": "^4.5.5"

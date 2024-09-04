@@ -18,7 +18,9 @@ export default async function Layout({
         </div>
       </nav>
       <div className="w-full flex justify-center items-center">{children}</div>
-      <div></div>
+      <p className="text-sm text-muted-foreground text-center">
+        Authentication secured by Supabase
+      </p>
     </div>
   );
 }

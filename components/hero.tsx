@@ -4,11 +4,12 @@ import Link from "next/link";
 
 export default function Header() {
   return (
-    <div className="flex flex-col gap-8 items-center py-[10vh] md:py-[20vh]">
+    <div className="flex flex-col gap-8 items-center py-[10vh] md:py-[20vh] font-bold">
       <div className="!leading-tight mx-auto text-center">
         <div className="flex flex-col gap-2 p">
-          <h1 className="text-4xl lg:text-5xl">
-            The fastest way to ACE your classes{" "}
+          <h1 className="text-3xl lg:text-4xl">
+            Keep your studies on track and <span>Ace</span>
+            <span className="brand-green">IT</span>
           </h1>
           <h1 className="text-2xl lg:text-3xltext-green-500">
             Take the stress away from your studying
@@ -17,9 +18,9 @@ export default function Header() {
       </div>
       <button
         className={`
-        p-2 px-3 bg-green-500 text-2xl lg:text-2xl text-white
-        border border-zinc-200 shadow-lg rounded-2xl hover:bg-green-500 
-        hover:text-white hover:text-3xl 
+        p-2 px-3 bg-green-500 text-base lg:text-lg text-white
+        border border-zinc-200 shadow-lg rounded-lg hover:bg-green-500 
+        hover:text-white hover:text-2xl 
         hover:shadow-xl hover:shadow-green-500/50 
         transition-all duration-300 ease-in-out transform`}
       >
