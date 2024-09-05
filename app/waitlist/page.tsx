@@ -2,7 +2,6 @@ import FetchDataSteps from "@/components/tutorial/fetch-data-steps";
 import { createClient } from "@/utils/supabase/server";
 import { InfoIcon } from "lucide-react";
 import { redirect } from "next/navigation";
-import { addSuggestionAction } from "../actions";
 import { FormMessage, Message } from "@/components/form-message";
 import { SubmitButton } from "@/components/submit-button";
 import { Input } from "@/components/ui/input";
@@ -58,28 +57,6 @@ export default async function Waitlist({
       >
         <Link href="/verified/flashcards/generate">Try it Now</Link>
       </button>
-      <form className="flex flex-col w-full max-w-md p-4 gap-2 [&>input]:mb-4">
-        <div className="flex flex-col gap-2 [&>input]:mb-3 mt-8">
-          <Label className="text-md text-muted-foreground" htmlFor="suggestion">
-            If you have any suggestions or features you would like to see,
-            please let us know here!
-          </Label>
-          <Input
-            type="text"
-            name="suggestion"
-            placeholder="E.G. 'I would like to see an interactive calendar' "
-            // minLength={6}
-            required
-          />
-          <SubmitButton
-            formAction={addSuggestionAction}
-            pendingText="Submitting..."
-          >
-            Submit
-          </SubmitButton>
-          <FormMessage message={searchParams} />
-        </div>
-      </form>
     </div>
   );
 }
