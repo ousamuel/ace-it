@@ -112,7 +112,7 @@ export default function GenerateFlashcards() {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      <Tabs defaultValue="new-exam" className="w-full">
+      <Tabs defaultValue="new-flashcards" className="w-full">
         <TabsList className="grid w-full grid-cols-2 my-8">
           <TabsTrigger value="new-flashcards">Add New Flashcards</TabsTrigger>
           <TabsTrigger value="saved-flashcards">Saved Flashcards</TabsTrigger>
