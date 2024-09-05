@@ -250,14 +250,14 @@ export default function Flashcard_v2({
           >
             <div className="relative flex flex-col gap-1 justify-center">
               <div className="">
-                <Typography variant="h6" component="p">
+                <p>
                   {currentCard.question}
-                </Typography>
+                </p>
               </div>
               <div className="bg-green-500/10">
-                <Typography variant="h6" component="p">
+               <p>
                   {currentCard.answer}
-                </Typography>
+                </p>
               </div>
             </div>
           </Box>
