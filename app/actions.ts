@@ -6,6 +6,9 @@ import { createClient } from "@/utils/supabase/server";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
+
+
+
 export const addFlashcards = async (formData: FormData) => {
   const supabase = createClient();
   const question = formData.get("question")?.toString();
@@ -13,6 +16,8 @@ export const addFlashcards = async (formData: FormData) => {
   const notes = formData.get("notes")?.toString();
   const setName = formData.get("setName")?.toString();
   const number = formData.get("setNumber")?.toString();
+  const file = formData.get("text")?.toString();
+
   if (!notes) {
     return { error: "Notes are required to generate flashcards" };
   }
@@ -26,6 +31,7 @@ export const addFlashcards = async (formData: FormData) => {
       "You must be logged in to add flashcards"
     );
   }
+  
   // Call the AI API to generate flashcards
   const origin = headers().get("origin");
   const apiUrl = `${origin}/api/generate-flash`;
@@ -36,6 +42,7 @@ export const addFlashcards = async (formData: FormData) => {
     },
     body: JSON.stringify({
       notes: notes,
+      // file: file,
       flashcardNumber: number,
     }),
   });
