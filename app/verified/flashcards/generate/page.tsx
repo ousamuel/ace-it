@@ -45,6 +45,7 @@ import Flashcard from "./Flashcard";
 import Flashcard_v2 from "./Flashcard_v2";
 import { getInstructionList } from "@/lib/mock-instructions";
 import { getFlashInstruction } from "@/lib/flash-instructions";
+import * as pdfjsLib from 'pdfjs-dist';
 
 
 export default function GenerateFlashcards() {
@@ -56,15 +57,49 @@ export default function GenerateFlashcards() {
   const [number, setNumber] = useState("");
   const [shouldFetch, setShouldFetch] = useState(false);
   const[flashSets, setFlashSets] = useState<any>([]);
+  const [file, setFile] = useState<File | null>(null);
+
+  // const extractTextFromPDF = async (file: File) => {
+  //   const arrayBuffer = await file.arrayBuffer();
+  //   const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+  //   let text = '';
+  
+  //   for (let i = 1; i <= pdf.numPages; i++) {
+  //     const page = await pdf.getPage(i);
+  //     const content = await page.getTextContent();
+      
+  //     const pageText = content.items
+  //       .filter(item => item.hasOwnProperty('str'))  // Ensure it's a TextItem
+  //       .map((item) => (item as any).str)  // Access the 'str' property safely
+  //       .join(' ');
+      
+  //     text += pageText + '\n'; 
+  //   }
+  //   return text;
+  // };
+
+  // const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   if (e.target.files && e.target.files[0]) {
+  //     setFile(e.target.files[0]);
+  //   }
+  // };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setShouldFetch(false);
 
+    // let text = '';
+    // if (file && file.type == 'application/pdf') {
+    //   text = await extractTextFromPDF(file);
+    // }
+    
     const formData = new FormData();
     formData.append("notes", notes);
     formData.append("setName", setName);
     formData.append("setNumber", number);
+    // if (text) {
+    //   formData.append("text", text);
+    // }
 
     const response = await addFlashcards(formData);
     if (response?.error) {
@@ -132,7 +167,7 @@ export default function GenerateFlashcards() {
             <div className="flex flex-col-reverse md:flex-row gap-2 gap-x-6 px-4">
               <article className="flex flex-col flex-1">
                 <h2 className="scroll-m-20 border-b pb-2 text-xl font-semibold tracking-tight first:mt-0">
-                  How to Use the Mock Exam Generator
+                  How to Use the Flashcard Generator
                 </h2>
                 <div className="px-2 list-decimal text-left">
                   {instructionList.map((group, groupIndex) => (
@@ -190,6 +225,14 @@ export default function GenerateFlashcards() {
                   rows={4}
                   required
                 />
+                {/* <Label htmlFor="file" className="text-lg">Upload PDF</Label>
+                  <Input
+                    type="file"
+                    id="file"
+                    name="file"
+                    accept="application/pdf"
+                    onChange={handleFileChange}
+                  /> */}
                 <Label htmlFor="setName" className="text-lg">Number of Flashcards</Label>
                 <Input
                   type="text"
@@ -200,6 +243,7 @@ export default function GenerateFlashcards() {
                   onChange={(e) => setNumber(e.target.value)}
                   required
                 />
+                
                 <button
                   type="submit"
                   className="px-4 py-2 font-bold text-white bg-green-700 rounded hover:bg-green-500 cursor-pointer"
