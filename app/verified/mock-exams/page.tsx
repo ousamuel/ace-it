@@ -299,6 +299,7 @@ export default function MockExam() {
                               {question.question}
                             </h2>
                             <RadioGroup
+                              className="gap-0"
                               value={selectedOptions[i]}
                               onValueChange={(value) =>
                                 handleOptionChange(i, value)
@@ -309,23 +310,24 @@ export default function MockExam() {
                                   (option: string, j: number) => (
                                     <div
                                       key={j}
-                                      className="flex items-center space-x-2 pl-2 w-full"
+                                      className="hover:bg-accent flex items-center pl-2 w-full"
                                     >
                                       <RadioGroupItem
                                         value={option}
                                         disabled={showAnswers}
+                                        className="py-1 "
                                         id={`question-${i}-option-${j}`}
                                       />
                                       <Label
                                         htmlFor={`question-${i}-option-${j}`}
-                                        className={`${
+                                        className={`w-full cursor-pointer ${
                                           showAnswers &&
                                           selectedOptions[i] === option
                                             ? option == question.answer
                                               ? "text-green-500"
                                               : "text-red-500"
                                             : ""
-                                        } py-1`}
+                                        } py-2 pl-2`}
                                       >
                                         {option}
                                       </Label>
@@ -391,6 +393,10 @@ export default function MockExam() {
                   <Button
                     onClick={() => {
                       setIsDialogOpen(false);
+                      setSelectedOptions({});
+                      setExamQuestions([]);
+                      setNumberCorrect(0);
+                      setShowAnswers(false);
                     }}
                   >
                     Close
