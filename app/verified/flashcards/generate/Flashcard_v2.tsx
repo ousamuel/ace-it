@@ -70,7 +70,7 @@ export default function Flashcard_v2({
         .delete()
         .eq("set_uid", flashcard.set_uid);
       if (deleteSetError) {
-        console.log("Error deleting set:", deleteSetError);
+        // console.log("Error deleting set:", deleteSetError);
         return;
       } else{
         // rerender flashcards with all flashcards that are NOT part of the deleted set
