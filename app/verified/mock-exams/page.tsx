@@ -65,24 +65,24 @@ export default function MockExam() {
     [key: number]: string;
   }>({});
 
+  const fetchMockExams = async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      return redirect("/sign-in");
+    }
+    const { data, error } = await supabase
+      .from("mock_exams")
+      .select("*")
+      .eq("user_uid", user?.id);
+    if (data) {
+      setExams(data);
+    } else if (error) {
+      console.error("Error fetching mock exam sets:", error);
+    }
+  };
   useEffect(() => {
-    const fetchMockExams = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) {
-        return redirect("/sign-in");
-      }
-      const { data, error } = await supabase
-        .from("mock_exams")
-        .select("*")
-        .eq("user_uid", user?.id);
-      if (data) {
-        setExams(data);
-      } else if (error) {
-        console.error("Error fetching mock exam sets:", error);
-      }
-    };
     fetchMockExams();
   }, [supabase]);
 
@@ -131,8 +131,9 @@ export default function MockExam() {
         toast("Failed to generated exam:", { description: response.error });
       } else {
         toast("Generating exam questions soon!", {
-          description: `Please wait 1-2 minutes to see your new exam in your "Saved Exams" Tab. You may have to refresh the page.`,
+          description: `Please check your "Saved Exams". You may have to wait/refresh the page.`,
         });
+        fetchMockExams();
         setIsGenerateDisabled(false);
       }
     }
@@ -456,9 +457,9 @@ export default function MockExam() {
                               {" "}
                               <CircleX
                                 className="hover:text-red-500 cursor-pointer"
-                                onClick={() => {
-                                  console.log(exam.exam_uid);
-                                }}
+                                // onClick={() => {
+                                //   console.log(exam.exam_uid);
+                                // }}
                               />
                             </PopoverTrigger>
                             <PopoverContent
