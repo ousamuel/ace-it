@@ -161,8 +161,10 @@ export const addExam = async (formData: FormData) => {
   }
 };
 
-export const addSuggestionAction = async (formData: FormData) => {
-  const suggestion = formData.get("suggestion")?.toString();
+export const submitUserTicketAction = async (formData: FormData) => {
+  const subject = formData.get("subject")?.toString();
+  const description = formData.get("description")?.toString();
+  const type = formData.get("type")?.toString();
   const supabase = createClient();
   const {
     data: { user },
@@ -175,20 +177,21 @@ export const addSuggestionAction = async (formData: FormData) => {
       "You must be logged in to submit a suggestion"
     );
   }
-  const { error } = await supabase.from("suggestions").insert([
+  const { error } = await supabase.from("customer_tickets").insert([
     {
-      suggestion,
+      subject,
+      description,
+      type,
       email: user.email,
       user_uid: user.id,
     },
   ]);
 
   if (error) {
-    // console.error(error.code + " " + error.message);
-    return encodedRedirect("error", "/waitlist", error.message);
+    return { error: "Error submitting ticket" };
   }
 
-  return encodedRedirect("success", "/waitlist", "Suggestion submitted!");
+  return { success: "Ticket submitted succesfully" };
 };
 export const addEventAction = async (formData: FormData) => {
   const title = formData.get("title")?.toString();

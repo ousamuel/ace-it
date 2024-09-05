@@ -1,13 +1,23 @@
+"use client";
 import FetchDataSteps from "@/components/tutorial/fetch-data-steps";
-import { createClient } from "@/utils/supabase/server";
+import { createClient } from "@/utils/supabase/client";
 import { InfoIcon } from "lucide-react";
 import { redirect } from "next/navigation";
+import { useEffect, useState } from "react";
 import { ContentLayout } from "@/components/admin-panel/content-layout";
-import { addSuggestionAction } from "../../actions";
+import { submitUserTicketAction } from "../../actions";
 import { FormMessage, Message } from "@/components/form-message";
 import { SubmitButton } from "@/components/submit-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -16,32 +26,20 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-
+import { toast } from "sonner";
 import Link from "next/link";
-export default async function Home({
-  searchParams,
-}: {
-  searchParams: Message;
-}) {
-  const supabase = createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return redirect("/sign-in");
-  }
-
+import { Button } from "@/components/ui/button";
+export default function Home() {
+  const [isSheetOpen, setIsSheetOpen] = useState<boolean>(false);
+  const handleSubmit = async (formData: FormData) => {
+    const result = await submitUserTicketAction(formData);
+    if (result.error) {
+      toast.error("Error submitting ticket. Please try again.");
+    } else if (result.success) {
+      setIsSheetOpen(false);
+      toast.success("Ticket submitted successfully!");
+    }
+  };
   return (
     <ContentLayout title="Home">
       <Breadcrumb>
@@ -68,7 +66,7 @@ export default async function Home({
         </p>
 
         <h2 className="text-green-500 mt-10 scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0">
-          AI-Powered Flashcards
+          AI-Powered Flashcards and Mock Exams
         </h2>
         <p className="leading-7 [&:not(:first-child)]:mt-6">
           Enhance your learning with flashcards that adapt to your study needs.
@@ -77,7 +75,7 @@ export default async function Home({
         </p>
 
         <h2 className="text-green-500 mt-10 scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0">
-          Practice Exams & Calendar
+          Functional Calendar
         </h2>
         <p className="leading-7 [&:not(:first-child)]:mt-6">
           Stay prepared with practice exams that simulate real test conditions.
@@ -85,53 +83,78 @@ export default async function Home({
           calendar, making sure you're always on top of your schedule.
         </p>
 
-        <h2 className="text-green-500 mt-10 scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0">
-          Chatbot Interactions & Quizzing
-        </h2>
-        <p className="leading-7 [&:not(:first-child)]:mt-6">
-          Make learning interactive and fun with AceIT's chatbot. Engage in
-          quick quizzes or ask for clarifications on tough topics – all through
-          a seamless conversational interface.
-        </p>
-
         <div className="flex py-5">
-          <Dialog>
-            <DialogTrigger>
+          <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+            <SheetTrigger>
+              {" "}
               <p className="px-4 py-2 font-bold text-white bg-green-700 rounded hover:bg-green-500 cursor-pointer">
-                Leave a Suggestion!
+                Contact Us
               </p>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <form className="flex flex-col w-full p-4 gap-2 [&>input]:mb-4">
-                  <DialogTitle>Leave a Suggestion!</DialogTitle>
-                  <div className="flex flex-col gap-2 [&>input]:mb-3 mt-8">
-                    <Label
-                      className="text-md text-muted-foreground"
-                      htmlFor="suggestion"
-                    >
-                      If you have any suggestions or features you would like to
-                      see, please let us know here!
-                    </Label>
-                    <Input
-                      type="text"
-                      name="suggestion"
-                      placeholder="E.G. 'I would like to see an interactive calendar' (Max 150 characters) "
-                      maxLength={150}
-                      required
-                    />
-                    <SubmitButton
-                      formAction={addSuggestionAction}
-                      pendingText="Submitting..."
-                    >
-                      Submit
-                    </SubmitButton>
-                    <FormMessage message={searchParams} />
-                  </div>
-                </form>
-              </DialogHeader>
-            </DialogContent>
-          </Dialog>
+            </SheetTrigger>
+            <SheetContent>
+              <SheetHeader>
+                <SheetTitle>Contact Form</SheetTitle>
+                <SheetDescription>
+                  If you encounter any issues or want to reach out to the team,
+                  please don’t hesitate to contact us by submitting a ticket
+                  here. Your input is crucial to improving our app and providing
+                  the best experience possible!
+                </SheetDescription>
+              </SheetHeader>
+              <form
+                className="flex flex-col w-full py-4 gap-2 [&>input]:mb-4"
+                onSubmit={(e) => {
+                  e.preventDefault()
+                  const form = e.target as HTMLFormElement;
+                  const formData = new FormData(form);
+                  handleSubmit(formData);
+                }}
+              >
+                <div className="flex flex-col gap-2 [&>label]:mt-3  text-foreground text-sm">
+                  <Label htmlFor="type">
+                    Select one <span className="text-red-500">*</span>
+                  </Label>
+                  <select name="type" required className="border rounded p-2">
+                    <option value="account">Account</option>
+                    <option value="feedback/suggestions">
+                      Feedback & Suggestions
+                    </option>
+                    <option value="billing/subscription">
+                      Billing/Subscription
+                    </option>
+                    {/* <option value="personal">Personal</option> */}
+                    <option value="other">Other</option>
+                  </select>
+                  <Label htmlFor="subject">
+                    Subject <span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    type="text"
+                    name="subject"
+                    className="bg-"
+                    placeholder="Maximum of 50 characters"
+                    maxLength={50}
+                    required
+                  />{" "}
+                  <Label htmlFor="description">
+                    Description <span className="text-red-500">*</span>
+                  </Label>
+                  <textarea
+                    id="description"
+                    name="description"
+                    className="w-full p-2 border rounded"
+                    placeholder="Maximum of 300 characters"
+                    rows={4}
+                    maxLength={300}
+                    required
+                  />
+                  <SubmitButton className="my-4" pendingText="Submitting...">
+                    Submit
+                  </SubmitButton>
+                </div>
+              </form>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
     </ContentLayout>
