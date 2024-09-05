@@ -22,9 +22,11 @@ const systemPrompt = `
 
   6. **Align with Learning Objectives:** Tailor the flashcards to match the user’s learning goals. Provide additional context or explanations when necessary to clarify complex ideas and enhance understanding.
 
-  7. **Limit Flashcard Quantity:** Generate a maximum of 30 flashcards. If the user requests more than 30, prioritize the most essential content and stop at 30 flashcards.
+  9. You are generating brief flashcard responses designed for quick studying. Each question should be direct and answerable in a sentence or two. Ensure that both questions and answers are concise, focusing only on the key points. Avoid adding extra details or explanations beyond what is necessary to convey the core concept.
 
-  8. **Structured Output:** Present the generated flashcards in the following JSON format:
+  8. **Limit Flashcard Quantity:** Generate a maximum of 30 flashcards. If the user requests more than 30, prioritize the most essential content and stop at 30 flashcards.
+
+  9. **Structured Output:** Present the generated flashcards in the following JSON format:
       json
       {
           "flashcards": [

@@ -13,6 +13,7 @@ import { useRouter } from "next/navigation";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { ContentLayout } from "@/components/admin-panel/content-layout";
+import { MessageCircleWarningIcon } from "lucide-react";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -54,6 +55,7 @@ export default function GenerateFlashcards() {
   const [notes, setNotes] = useState("");
   const [number, setNumber] = useState("");
   const [shouldFetch, setShouldFetch] = useState(false);
+  const[flashSets, setFlashSets] = useState<any>([]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,6 +73,25 @@ export default function GenerateFlashcards() {
       setShouldFetch(true);
     }
   };
+
+  useEffect(() => {
+    const fetchFlashSet = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) {
+        return redirect("/sign-in");
+      }
+      const { data, error } = await supabase
+        .from("flashcard_set")
+        .select("*")
+        .eq("user_uid", user?.id);
+      if (data) {
+        setFlashSets(data);
+      } console.error("Error fetching flashcard sets:", error);
+    };
+    fetchFlashSet();
+  }, [supabase]);
 
   return (
     <ContentLayout title="Flashcards">
@@ -144,21 +165,21 @@ export default function GenerateFlashcards() {
               </article>{" "}
               <Separator className="flex md:hidden " />
             <form
-              className="flex flex-col w-full max-w-md p-4 gap-2 mx-auto border border-green-500/50 rounded-lg"
+              className="flex flex-col flex-1 gap-2"
               onSubmit={handleSubmit}
             >
-              <div className="flex flex-col gap-2 mt-8 ">
-                <Label htmlFor="setName">Flashcard Set Name</Label>
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="setName" className="text-lg">Flashcard Set Name</Label>
                 <Input
                   type="text"
                   id="setName"
                   name="setName"
-                  placeholder="E.G. English Exam"
+                  placeholder="e.g. AP Lang"
                   value={setName}
                   onChange={(e) => setSetName(e.target.value)}
                   required
                 />
-                <Label htmlFor="notes">Notes</Label>
+                <Label htmlFor="notes" className="text-lg">Notes</Label>
                 <textarea
                   id="notes"
                   name="notes"
@@ -169,12 +190,12 @@ export default function GenerateFlashcards() {
                   rows={4}
                   required
                 />
-                <Label htmlFor="setName">Number of Flashcards</Label>
+                <Label htmlFor="setName" className="text-lg">Number of Flashcards</Label>
                 <Input
                   type="text"
                   id="setNumber"
                   name="setNumber"
-                  placeholder="1-30 flashcards"
+                  placeholder="e.g. Choose from 1-30"
                   value={number}
                   onChange={(e) => setNumber(e.target.value)}
                   required
@@ -185,14 +206,58 @@ export default function GenerateFlashcards() {
                 >
                   Generate Flashcards
                 </button>
+                <p className="text-sm text-muted-foreground">
+                    Please note that while our AI strives for accuracy, it may
+                    occasionally produce incorrect information, so always verify
+                    critical details.
+                  </p>
               </div>
             </form>
           </div>
           </section>
       </TabsContent>
       <TabsContent value="saved-flashcards">
-        <h3 className="text-2xl font-semibold tracking-tight">My Flashcards</h3>
-        <Flashcard_v2 shouldFetch={shouldFetch} />
+        <section>
+        <h1 className="text-xl font-extrabold tracking-tight lg:text-3xl">
+            My Saved Flashcards
+          </h1>
+          <div className="my-5 bg-accent text-sm p-3 px-5 rounded-md text-foreground flex gap-3 items-center">
+              <MessageCircleWarningIcon size="16" strokeWidth={2} />
+                Currently, you can create only one set of flashcards. 
+                We're working on allowing multiple sets, and this feature will be available soon!
+            </div>
+          {/* <Accordion type="multiple" className="flex flex-col gap-4">
+                {flashSets.length > 0 ? (
+                  flashSets.map((exam: any, i: number) => (
+                    
+                    <Card key={i} className="w-full">
+                      <AccordionItem
+                        key={i}
+                        value={exam.exam_name + i}
+                        className=""
+                      >
+                        <AccordionTrigger className="p-4">
+                          <CardHeader className="p-0 py-4 px-4">
+                            <CardTitle className="flex justify-between lg:text-lg text-white">
+                              {flashSets.set_name} Soon
+                            </CardTitle>
+                          </CardHeader>
+                        </AccordionTrigger>
+                          <AccordionContent>
+                            Soon
+                          </AccordionContent>
+                        </AccordionItem>
+                      </Card>
+                ))
+              ) : (
+                <p className="text-lg text-muted-foreground">
+                  No Sets saved yet.
+                </p>
+              )}
+            </Accordion> */}
+            <Flashcard_v2 shouldFetch={shouldFetch} />
+        </section>
+
       </TabsContent>
       </Tabs>
     </ContentLayout>
