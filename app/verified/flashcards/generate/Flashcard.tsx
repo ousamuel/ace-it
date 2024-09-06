@@ -13,11 +13,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+interface FlashcardProps {
+  shouldFetch: boolean;
+  set_uid: string; // Include set_uid in the props
+}
+
 export default function Flashcard({
   shouldFetch,
-}: {
-  shouldFetch: boolean;
-}) {
+  set_uid,
+}: FlashcardProps) {
   const supabase = createClient();
 
   const [flashcards, setFlashcards] = useState<any[]>([]);
@@ -107,28 +111,6 @@ export default function Flashcard({
     }
   };
 
-  const clearFlashcards = async (flashcard: any) => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (user) {
-      const { error } = await supabase
-        .from("flashcards")
-        .delete()
-        .eq("user_uid", user.id);
-
-      if (error) {
-        console.error("Error deleting flashcards:", error);
-        toast.error("Failed to clear flashcards.");
-      } else {
-        setFlashcards([]);
-        setCurrentIndex(0);
-        toast("All flashcards cleared!");
-      }
-    }
-  };
-
   const handleNext = () => {
     setFlipped(false); // Reset flip state when moving to the next card
     setCurrentIndex((prevIndex) => (prevIndex + 1) % flashcards.length);
@@ -198,15 +180,7 @@ export default function Flashcard({
               Delete
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem
-              id="clear-card"
-              className="text-red-500 hover:bg-red-800"
-              onClick={() => {
-                clearFlashcards(currentCard);
-              }}
-            >
-              Clear
-            </DropdownMenuItem>
+            
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

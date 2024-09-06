@@ -16,7 +16,7 @@ export const addFlashcards = async (formData: FormData) => {
   const notes = formData.get("notes")?.toString();
   const setName = formData.get("setName")?.toString();
   const number = formData.get("setNumber")?.toString();
-  const file = formData.get("text")?.toString();
+  // const file = formData.get("text")?.toString();
 
   if (!notes) {
     return { error: "Notes are required to generate flashcards" };
@@ -42,7 +42,7 @@ export const addFlashcards = async (formData: FormData) => {
     },
     body: JSON.stringify({
       notes: notes,
-      file: file,
+      // file: file,
       flashcardNumber: number,
     }),
   });

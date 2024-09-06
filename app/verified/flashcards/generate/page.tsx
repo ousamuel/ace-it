@@ -13,7 +13,7 @@ import { useRouter } from "next/navigation";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { ContentLayout } from "@/components/admin-panel/content-layout";
-import { MessageCircleWarningIcon } from "lucide-react";
+import { CircleX, MessageCircleWarningIcon } from "lucide-react";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -22,6 +22,11 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Box } from "@mui/material";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
@@ -44,6 +49,7 @@ import {
 import Flashcard from "./Flashcard";
 import { getFlashInstruction } from "@/lib/flash-instructions";
 import * as pdfjsLib from 'pdfjs-dist';
+import { toast } from "sonner";
 
 
 export default function GenerateFlashcards() {
@@ -57,53 +63,58 @@ export default function GenerateFlashcards() {
   const[flashSets, setFlashSets] = useState<any>([]);
   const [file, setFile] = useState<File | null>(null);
 
-  const extractTextFromPDF = async (file: File) => {
-    const arrayBuffer = await file.arrayBuffer();
-    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-    let text = '';
-  
-    for (let i = 1; i <= pdf.numPages; i++) {
-      const page = await pdf.getPage(i);
-      const content = await page.getTextContent();
-      
-      const pageText = content.items
-        .filter(item => item.hasOwnProperty('str'))  // Ensure it's a TextItem
-        .map((item) => (item as any).str)  // Access the 'str' property safely
-        .join(' ');
-      
-      text += pageText + '\n'; 
-    }
-    return text;
+  const capitalizeFirstLetter = (str: string) => {
+    return str.charAt(0).toUpperCase() + str.slice(1);
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0]);
-    }
-  };
+  // const extractTextFromPDF = async (file: File) => {
+  //   const arrayBuffer = await file.arrayBuffer();
+  //   const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+  //   let text = '';
+  
+  //   for (let i = 1; i <= pdf.numPages; i++) {
+  //     const page = await pdf.getPage(i);
+  //     const content = await page.getTextContent();
+      
+  //     const pageText = content.items
+  //       .filter(item => item.hasOwnProperty('str'))  // Ensure it's a TextItem
+  //       .map((item) => (item as any).str)  // Access the 'str' property safely
+  //       .join(' ');
+      
+  //     text += pageText + '\n'; 
+  //   }
+  //   return text;
+  // };
+
+  // const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   if (e.target.files && e.target.files[0]) {
+  //     setFile(e.target.files[0]);
+  //   }
+  // };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setShouldFetch(false);
 
-    let text = '';
-    if (file && file.type == 'application/pdf') {
-      text = await extractTextFromPDF(file);
-    }
+    // let text = '';
+    // if (file && file.type == 'application/pdf') {
+    //   text = await extractTextFromPDF(file);
+    // }
     
     const formData = new FormData();
     formData.append("notes", notes);
     formData.append("setName", setName);
     formData.append("setNumber", number);
-    if (text) {
-      formData.append("text", text);
-    }
+    // if (text) {
+    //   formData.append("text", text);
+    // }
 
     const response = await addFlashcards(formData);
     if (response?.error) {
       console.error(response.error);
     } else {
       setShouldFetch(true);
+      toast("Set generating...")
     }
   };
 
@@ -124,7 +135,30 @@ export default function GenerateFlashcards() {
       } console.error("Error fetching flashcard sets:", error);
     };
     fetchFlashSet();
+    setShouldFetch(true);
   }, [supabase]);
+
+  const clearFlashcards = async (set_uid: any) => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (user) {
+      const { error } = await supabase
+        .from("flashcard_set")
+        .delete()
+        .eq("set_uid", set_uid);
+
+      if (error) {
+        console.error("Error deleting set:", error);
+        toast.error("Failed to clear set.");
+      } else {
+        toast("Set deleted!");
+        setShouldFetch(true);
+
+      }
+    }
+  };
 
   return (
     <ContentLayout title="Flashcards">
@@ -268,25 +302,46 @@ export default function GenerateFlashcards() {
                 Currently, you can create only one set of flashcards. 
                 We're working on allowing multiple sets, and this feature will be available soon!
             </div>
-          {/* <Accordion type="multiple" className="flex flex-col gap-4">
+          <Accordion type="multiple" className="flex flex-col gap-4">
                 {flashSets.length > 0 ? (
-                  flashSets.map((exam: any, i: number) => (
+                  flashSets.map((set: any, i: number) => (
                     
                     <Card key={i} className="w-full">
                       <AccordionItem
                         key={i}
-                        value={exam.exam_name + i}
+                        value={set.set_name + i}
                         className=""
                       >
                         <AccordionTrigger className="p-4">
                           <CardHeader className="p-0 py-4 px-4">
-                            <CardTitle className="flex justify-between lg:text-lg text-white">
-                              {flashSets.set_name} Soon
+                            <CardTitle className="flex justify-between lg:text-lg">
+                            {capitalizeFirstLetter(set.set_name)}
                             </CardTitle>
                           </CardHeader>
                         </AccordionTrigger>
                           <AccordionContent>
-                            Soon
+                          <Flashcard shouldFetch={shouldFetch} set_uid={set.set_uid} />
+
+                          <Popover>
+                            <PopoverTrigger className="flex h-fit">
+                              {" "}
+                              <CircleX
+                                className="hover:text-red-500 cursor-pointer"
+                                // onClick={() => {
+                                //   console.log(exam.exam_uid);
+                                // }}
+                              />
+                            </PopoverTrigger>
+                            <PopoverContent
+                              onClick={() => clearFlashcards(set.set_uid)}
+                              className="w-fit text-red-600 cursor-pointer"
+                            >
+                              <p>Confirm Delete</p>
+                              <p className="text-sm text-muted-foreground">
+                                This action is undoable
+                              </p>
+                            </PopoverContent>
+                          </Popover>
                           </AccordionContent>
                         </AccordionItem>
                       </Card>
@@ -296,8 +351,7 @@ export default function GenerateFlashcards() {
                   No Sets saved yet.
                 </p>
               )}
-            </Accordion> */}
-            <Flashcard shouldFetch={shouldFetch} />
+            </Accordion>
         </section>
 
       </TabsContent>
