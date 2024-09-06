@@ -43,7 +43,7 @@ export default function Flashcard({
       const { data, error } = await supabase
         .from("flashcards")
         .select("*")
-        .eq("user_uid", user.id);
+        .eq("set_uid", set_uid);
 
       setLoading(false);
 
