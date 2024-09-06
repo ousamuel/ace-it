@@ -42,7 +42,6 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import Flashcard from "./Flashcard";
-import Flashcard_v2 from "./Flashcard_v2";
 import { getFlashInstruction } from "@/lib/flash-instructions";
 import * as pdfjsLib from 'pdfjs-dist';
 
@@ -298,7 +297,7 @@ export default function GenerateFlashcards() {
                 </p>
               )}
             </Accordion> */}
-            <Flashcard_v2 shouldFetch={shouldFetch} />
+            <Flashcard shouldFetch={shouldFetch} />
         </section>
 
       </TabsContent>
