@@ -19,6 +19,7 @@ export default function Flashcard_v2({
   shouldFetch: boolean;
 }) {
   const supabase = createClient();
+
   const [flashcards, setFlashcards] = useState<any[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);

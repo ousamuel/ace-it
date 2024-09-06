@@ -43,7 +43,6 @@ import {
 } from "@/components/ui/accordion";
 import Flashcard from "./Flashcard";
 import Flashcard_v2 from "./Flashcard_v2";
-import { getInstructionList } from "@/lib/mock-instructions";
 import { getFlashInstruction } from "@/lib/flash-instructions";
 import * as pdfjsLib from 'pdfjs-dist';
 
@@ -59,47 +58,47 @@ export default function GenerateFlashcards() {
   const[flashSets, setFlashSets] = useState<any>([]);
   const [file, setFile] = useState<File | null>(null);
 
-  // const extractTextFromPDF = async (file: File) => {
-  //   const arrayBuffer = await file.arrayBuffer();
-  //   const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-  //   let text = '';
+  const extractTextFromPDF = async (file: File) => {
+    const arrayBuffer = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    let text = '';
   
-  //   for (let i = 1; i <= pdf.numPages; i++) {
-  //     const page = await pdf.getPage(i);
-  //     const content = await page.getTextContent();
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const content = await page.getTextContent();
       
-  //     const pageText = content.items
-  //       .filter(item => item.hasOwnProperty('str'))  // Ensure it's a TextItem
-  //       .map((item) => (item as any).str)  // Access the 'str' property safely
-  //       .join(' ');
+      const pageText = content.items
+        .filter(item => item.hasOwnProperty('str'))  // Ensure it's a TextItem
+        .map((item) => (item as any).str)  // Access the 'str' property safely
+        .join(' ');
       
-  //     text += pageText + '\n'; 
-  //   }
-  //   return text;
-  // };
+      text += pageText + '\n'; 
+    }
+    return text;
+  };
 
-  // const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   if (e.target.files && e.target.files[0]) {
-  //     setFile(e.target.files[0]);
-  //   }
-  // };
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setFile(e.target.files[0]);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setShouldFetch(false);
 
-    // let text = '';
-    // if (file && file.type == 'application/pdf') {
-    //   text = await extractTextFromPDF(file);
-    // }
+    let text = '';
+    if (file && file.type == 'application/pdf') {
+      text = await extractTextFromPDF(file);
+    }
     
     const formData = new FormData();
     formData.append("notes", notes);
     formData.append("setName", setName);
     formData.append("setNumber", number);
-    // if (text) {
-    //   formData.append("text", text);
-    // }
+    if (text) {
+      formData.append("text", text);
+    }
 
     const response = await addFlashcards(formData);
     if (response?.error) {

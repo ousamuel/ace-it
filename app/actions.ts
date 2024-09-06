@@ -42,11 +42,11 @@ export const addFlashcards = async (formData: FormData) => {
     },
     body: JSON.stringify({
       notes: notes,
-      // file: file,
+      file: file,
       flashcardNumber: number,
     }),
   });
-
+  
   if (!response.ok) {
     return { error: "Failed to generate flashcards" };
   }
@@ -96,6 +96,7 @@ export const addFlashcards = async (formData: FormData) => {
     }
   }
 };
+
 export const addExam = async (formData: FormData) => {
   const supabase = createClient();
   const notes = formData.get("notes")?.toString();
