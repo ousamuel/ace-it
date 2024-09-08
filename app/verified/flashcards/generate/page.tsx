@@ -114,8 +114,9 @@ export default function GenerateFlashcards() {
       console.error(response.error);
     } else {
       setShouldFetch(true);
-      toast("Set generating...")
+      toast("Generating set...");
     }
+
   };
 
   useEffect(() => {
@@ -132,6 +133,7 @@ export default function GenerateFlashcards() {
         .eq("user_uid", user?.id);
       if (data) {
         setFlashSets(data);
+        toast("Generated set successfully!");
       } console.error("Error fetching flashcard sets:", error);
     };
     fetchFlashSet();
@@ -158,6 +160,38 @@ export default function GenerateFlashcards() {
 
       }
     }
+  };
+
+  const date = new Date()
+
+  const updatePracticeDate = async (set_uid: string) => {
+    const { error } = await supabase
+      .from("flashcard_set")
+      .update({
+        last_practiced: date,
+      })
+      .eq("set_uid", set_uid);
+
+    if (error) {
+      console.log(error);
+    }
+  };
+
+  const formatDateObj = (date: string) => {
+    let month = "";
+    let day = "";
+    let year = date.substring(0, 4);
+    if (parseInt(date.substring(5, 7)) >= 10) {
+      month = date.substring(5, 7);
+    } else {
+      month = date.substring(6, 7);
+    }
+    if (parseInt(date.substring(8, 10)) >= 10) {
+      day = date.substring(8, 10);
+    } else {
+      day = date.substring(9, 10);
+    }
+    return `${month}/${day}/${year}`;
   };
 
   return (
@@ -299,13 +333,12 @@ export default function GenerateFlashcards() {
           </h1>
           <div className="my-5 bg-accent text-sm p-3 px-5 rounded-md text-foreground flex gap-3 items-center">
               <MessageCircleWarningIcon size="16" strokeWidth={2} />
-                Currently, you can create only one set of flashcards. 
-                We're working on allowing multiple sets, and this feature will be available soon!
+                As a free subscriber, you are allowed to save up to 5 flashcard sets at a time. You
+                currently have {flashSets.length} sets saved.
             </div>
           <Accordion type="multiple" className="flex flex-col gap-4">
                 {flashSets.length > 0 ? (
                   flashSets.map((set: any, i: number) => (
-                    
                     <Card key={i} className="w-full">
                       <AccordionItem
                         key={i}
@@ -320,28 +353,49 @@ export default function GenerateFlashcards() {
                           </CardHeader>
                         </AccordionTrigger>
                           <AccordionContent>
-                          <Flashcard shouldFetch={shouldFetch} set_uid={set.set_uid} />
-
+                        <section>
+                          <Separator/>
+                        <div className="px-4 flex justify-between py-2 pb-5">
+                          <section className="flex flex-col flex-1 gap-1">
+                            <h4>
+                              Created on:{" "}
+                              {set.created_at
+                                ? formatDateObj(set.created_at)
+                                : "N/A"}
+                            </h4>
+                            {/* <h4>
+                              Last taken on:{" "}
+                              {set.last_practiced
+                                ? formatDateObj(set.last_practiced)
+                                : "N/A"}
+                            </h4> */}
+                          </section>
                           <Popover>
-                            <PopoverTrigger className="flex h-fit">
-                              {" "}
-                              <CircleX
-                                className="hover:text-red-500 cursor-pointer"
-                                // onClick={() => {
-                                //   console.log(exam.exam_uid);
-                                // }}
-                              />
-                            </PopoverTrigger>
-                            <PopoverContent
-                              onClick={() => clearFlashcards(set.set_uid)}
-                              className="w-fit text-red-600 cursor-pointer"
-                            >
-                              <p>Confirm Delete</p>
-                              <p className="text-sm text-muted-foreground">
-                                This action is undoable
-                              </p>
-                            </PopoverContent>
-                          </Popover>
+                              <PopoverTrigger className="flex h-fit">
+                                {" "}
+                                <CircleX
+                                  className="hover:text-red-500 cursor-pointer"
+                                  // onClick={() => {
+                                  //   console.log(exam.exam_uid);
+                                  // }}
+                                />
+                              </PopoverTrigger>
+                              <PopoverContent
+                                // onClick={() => clearFlashcards(set.set_uid)}
+                                className="w-fit text-red-600 cursor-pointer"
+                              >
+                                <p>Confirm Delete</p>
+                                <p className="text-sm text-muted-foreground">
+                                  This action is undoable
+                                </p>
+                              </PopoverContent>
+                            </Popover>
+
+                          </div>
+                          {/* <Separator/> */}
+
+                          <Flashcard shouldFetch={shouldFetch} set_uid={set.set_uid} />
+                          </section>
                           </AccordionContent>
                         </AccordionItem>
                       </Card>

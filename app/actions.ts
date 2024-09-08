@@ -52,12 +52,13 @@ export const addFlashcards = async (formData: FormData) => {
   }
 
   const flashcards = await response.json();
-
+  const date = new Date();
   // Save set to Supabase
   const { error: setError } = await supabase.from("flashcard_set").insert({
     notes,
     set_name: setName,
     user_uid: user.id,
+    created_at: date
   });
   // Await successful set save
   if (setError) {

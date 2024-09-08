@@ -1,4 +1,4 @@
-// generate/fladhcards_v2.tsx
+// generate/fladhcards.tsx
 import { useState, useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { redirect } from "next/navigation";
@@ -179,8 +179,6 @@ export default function Flashcard({
             >
               Delete
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
