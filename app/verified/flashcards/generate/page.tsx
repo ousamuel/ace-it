@@ -13,7 +13,7 @@ import { useRouter } from "next/navigation";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { ContentLayout } from "@/components/admin-panel/content-layout";
-import { MessageCircleWarningIcon } from "lucide-react";
+import { CircleX, MessageCircleWarningIcon } from "lucide-react";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -22,6 +22,11 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Box } from "@mui/material";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
@@ -42,10 +47,9 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import Flashcard from "./Flashcard";
-import Flashcard_v2 from "./Flashcard_v2";
-import { getInstructionList } from "@/lib/mock-instructions";
 import { getFlashInstruction } from "@/lib/flash-instructions";
 import * as pdfjsLib from 'pdfjs-dist';
+import { toast } from "sonner";
 
 
 export default function GenerateFlashcards() {
@@ -58,6 +62,10 @@ export default function GenerateFlashcards() {
   const [shouldFetch, setShouldFetch] = useState(false);
   const[flashSets, setFlashSets] = useState<any>([]);
   const [file, setFile] = useState<File | null>(null);
+
+  const capitalizeFirstLetter = (str: string) => {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  };
 
   // const extractTextFromPDF = async (file: File) => {
   //   const arrayBuffer = await file.arrayBuffer();
@@ -106,7 +114,9 @@ export default function GenerateFlashcards() {
       console.error(response.error);
     } else {
       setShouldFetch(true);
+      toast("Generating set...");
     }
+
   };
 
   useEffect(() => {
@@ -123,10 +133,65 @@ export default function GenerateFlashcards() {
         .eq("user_uid", user?.id);
       if (data) {
         setFlashSets(data);
+        // toast("Generated set successfully!");
       } console.error("Error fetching flashcard sets:", error);
     };
     fetchFlashSet();
+    setShouldFetch(true);
   }, [supabase]);
+
+  const clearFlashcards = async (set_uid: any) => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (user) {
+      const { error } = await supabase
+        .from("flashcard_set")
+        .delete()
+        .eq("set_uid", set_uid);
+
+      if (error) {
+        console.error("Error deleting set:", error);
+        toast.error("Failed to clear set.");
+      } else {
+        toast("Set deleted!");
+        setShouldFetch(true);
+      }
+    }
+  };
+
+  const date = new Date()
+
+  const updatePracticeDate = async (set_uid: string) => {
+    const { error } = await supabase
+      .from("flashcard_set")
+      .update({
+        last_practiced: date,
+      })
+      .eq("set_uid", set_uid);
+
+    if (error) {
+      console.log(error);
+    }
+  };
+
+  const formatDateObj = (date: string) => {
+    let month = "";
+    let day = "";
+    let year = date.substring(0, 4);
+    if (parseInt(date.substring(5, 7)) >= 10) {
+      month = date.substring(5, 7);
+    } else {
+      month = date.substring(6, 7);
+    }
+    if (parseInt(date.substring(8, 10)) >= 10) {
+      day = date.substring(8, 10);
+    } else {
+      day = date.substring(9, 10);
+    }
+    return `${month}/${day}/${year}`;
+  };
 
   return (
     <ContentLayout title="Flashcards">
@@ -267,28 +332,69 @@ export default function GenerateFlashcards() {
           </h1>
           <div className="my-5 bg-accent text-sm p-3 px-5 rounded-md text-foreground flex gap-3 items-center">
               <MessageCircleWarningIcon size="16" strokeWidth={2} />
-                Currently, you can create only one set of flashcards. 
-                We're working on allowing multiple sets, and this feature will be available soon!
+                As a free subscriber, you are allowed to save up to 5 flashcard sets at a time. You
+                currently have {flashSets.length} sets saved.
             </div>
-          {/* <Accordion type="multiple" className="flex flex-col gap-4">
+          <Accordion type="multiple" className="flex flex-col gap-4">
                 {flashSets.length > 0 ? (
-                  flashSets.map((exam: any, i: number) => (
-                    
+                  flashSets.map((set: any, i: number) => (
                     <Card key={i} className="w-full">
                       <AccordionItem
                         key={i}
-                        value={exam.exam_name + i}
+                        value={set.set_name + i}
                         className=""
                       >
                         <AccordionTrigger className="p-4">
                           <CardHeader className="p-0 py-4 px-4">
-                            <CardTitle className="flex justify-between lg:text-lg text-white">
-                              {flashSets.set_name} Soon
+                            <CardTitle className="flex justify-between lg:text-lg">
+                            {capitalizeFirstLetter(set.set_name)}
                             </CardTitle>
                           </CardHeader>
                         </AccordionTrigger>
                           <AccordionContent>
-                            Soon
+                        <section>
+                          <Separator/>
+                        <div className="px-4 flex justify-between py-2 pb-5">
+                          <section className="flex flex-col flex-1 gap-1">
+                            <h4>
+                              Created on:{" "}
+                              {set.created_at
+                                ? formatDateObj(set.created_at)
+                                : "N/A"}
+                            </h4>
+                            {/* <h4>
+                              Last taken on:{" "}
+                              {set.last_practiced
+                                ? formatDateObj(set.last_practiced)
+                                : "N/A"}
+                            </h4> */}
+                          </section>
+                          <Popover>
+                              <PopoverTrigger className="flex h-fit">
+                                {" "}
+                                <CircleX
+                                  className="hover:text-red-500 cursor-pointer"
+                                  // onClick={() => {
+                                  //   console.log(exam.exam_uid);
+                                  // }}
+                                />
+                              </PopoverTrigger>
+                              <PopoverContent
+                                onClick={() => clearFlashcards(set.set_uid)}
+                                className="w-fit text-red-600 cursor-pointer"
+                              >
+                                <p>Confirm Delete</p>
+                                <p className="text-sm text-muted-foreground">
+                                  This action is undoable
+                                </p>
+                              </PopoverContent>
+                            </Popover>
+
+                          </div>
+                          {/* <Separator/> */}
+
+                          <Flashcard shouldFetch={shouldFetch} set_uid={set.set_uid} />
+                          </section>
                           </AccordionContent>
                         </AccordionItem>
                       </Card>
@@ -298,8 +404,7 @@ export default function GenerateFlashcards() {
                   No Sets saved yet.
                 </p>
               )}
-            </Accordion> */}
-            <Flashcard_v2 shouldFetch={shouldFetch} />
+            </Accordion>
         </section>
 
       </TabsContent>

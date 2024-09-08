@@ -16,7 +16,7 @@ export const addFlashcards = async (formData: FormData) => {
   const notes = formData.get("notes")?.toString();
   const setName = formData.get("setName")?.toString();
   const number = formData.get("setNumber")?.toString();
-  const file = formData.get("text")?.toString();
+  // const file = formData.get("text")?.toString();
 
   if (!notes) {
     return { error: "Notes are required to generate flashcards" };
@@ -46,18 +46,19 @@ export const addFlashcards = async (formData: FormData) => {
       flashcardNumber: number,
     }),
   });
-
+  
   if (!response.ok) {
     return { error: "Failed to generate flashcards" };
   }
 
   const flashcards = await response.json();
-
+  const date = new Date();
   // Save set to Supabase
   const { error: setError } = await supabase.from("flashcard_set").insert({
     notes,
     set_name: setName,
     user_uid: user.id,
+    created_at: date
   });
   // Await successful set save
   if (setError) {
@@ -96,6 +97,7 @@ export const addFlashcards = async (formData: FormData) => {
     }
   }
 };
+
 export const addExam = async (formData: FormData) => {
   const supabase = createClient();
   const notes = formData.get("notes")?.toString();
