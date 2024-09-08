@@ -133,7 +133,7 @@ export default function GenerateFlashcards() {
         .eq("user_uid", user?.id);
       if (data) {
         setFlashSets(data);
-        toast("Generated set successfully!");
+        // toast("Generated set successfully!");
       } console.error("Error fetching flashcard sets:", error);
     };
     fetchFlashSet();
