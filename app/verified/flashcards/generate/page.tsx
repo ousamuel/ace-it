@@ -157,7 +157,6 @@ export default function GenerateFlashcards() {
       } else {
         toast("Set deleted!");
         setShouldFetch(true);
-
       }
     }
   };
@@ -381,7 +380,7 @@ export default function GenerateFlashcards() {
                                 />
                               </PopoverTrigger>
                               <PopoverContent
-                                // onClick={() => clearFlashcards(set.set_uid)}
+                                onClick={() => clearFlashcards(set.set_uid)}
                                 className="w-fit text-red-600 cursor-pointer"
                               >
                                 <p>Confirm Delete</p>
