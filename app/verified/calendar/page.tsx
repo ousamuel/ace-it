@@ -245,9 +245,9 @@ export default function Calendar({ searchParams }: { searchParams: Message }) {
           7
         )} /${selectedDate?.substring(8, 10)} /
           ${selectedDate?.substring(0, 4)}
-        }`,
+        `,
         {
-          description: `${title} ${!allDay && `from ${convertTimeTo12HourFormat(timeStart)} to ${convertTimeTo12HourFormat(timeEnd)}`}`,
+          description: `${title} ${!allDay ? `from ${convertTimeTo12HourFormat(timeStart)} to ${convertTimeTo12HourFormat(timeEnd)}` : ""}`,
         }
       );
       // Update the events list and close the dialog
