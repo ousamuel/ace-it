@@ -29,6 +29,10 @@ import {
 import { toast } from "sonner";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { addFlashcards } from "@/app/actions";
+import { addExam } from "@/app/actions";
+
+
 export default function Home() {
   const [isSheetOpen, setIsSheetOpen] = useState<boolean>(false);
   const handleSubmit = async (formData: FormData) => {
@@ -38,6 +42,84 @@ export default function Home() {
     } else if (result.success) {
       setIsSheetOpen(false);
       toast.success("Ticket submitted successfully!");
+    }
+    };
+
+  const [setName, setSetName] = useState("");
+  const [notes, setNotes] = useState("");
+  const [number, setNumber] = useState("");
+  const handleSubmitFlash = async (e: React.FormEvent) => {
+      e.preventDefault();
+  
+      // let text = '';
+      // if (file && file.type == 'application/pdf') {
+      //   text = await extractTextFromPDF(file);
+      // }
+      
+      const formData = new FormData();
+      formData.append("notes", notes);
+      formData.append("setName", setName);
+      formData.append("setNumber", number);
+      // if (text) {
+      //   formData.append("text", text);
+      // }
+  
+      const response = await addFlashcards(formData);
+      if (response?.error) {
+        console.error(response.error);
+      } else {
+        toast("Generating set...");
+      }
+  
+  };
+
+  const supabase = createClient();
+  const [examName, setExamName] = useState("");
+  const [questionCount, setQuestionCount] = useState("");
+  const [isGenerateDisabled, setIsGenerateDisabled] = useState<boolean>(false);
+
+  const handleSubmitExam = async (e: any) => {
+    e.preventDefault();
+    if (parseInt(questionCount) > 10) {
+      toast("You can request a max of 10 questions per exam.");
+      return;
+    }
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      return redirect("/sign-in");
+    }
+    const { data } = await supabase
+      .from("mock_exams")
+      .select("exam_name")
+      .eq("user_uid", user.id);
+    if (data && data.length >= 3) {
+      toast("You can only save up to 3 exams at a time", {
+        description: "Delete an existing exam to generate a new one",
+      });
+      return;
+    } else {
+      setIsGenerateDisabled(true);
+      toast("Submitting request...");
+      const formData = new FormData();
+      formData.append(
+        "notes",
+        notes +
+          "Please include 4 options for each question, with one option being the correct answer"
+      );
+      formData.append("examName", examName);
+      formData.append("questionCount", questionCount);
+
+      const response = await addExam(formData); // Use addExam function here
+      if (response?.error) {
+        toast("Failed to generated exam:", { description: response.error });
+      } else {
+        toast("Generating exam questions soon!", {
+          description: `Please check your "Saved Exams". You may have to wait/refresh the page.`,
+        });
+        setIsGenerateDisabled(false);
+      }
     }
   };
   return (
@@ -68,20 +150,73 @@ export default function Home() {
         <h2 className="text-green-500 mt-10 scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0">
           AI-Powered Flashcards and Mock Exams
         </h2>
-        <p className="leading-7 [&:not(:first-child)]:mt-6">
-          Enhance your learning with flashcards that adapt to your study needs.
-          AceIT's AI identifies key concepts for reinforcement, ensuring you
-          focus on what matters most.
-        </p>
-
-        <h2 className="text-green-500 mt-10 scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0">
-          Functional Calendar
-        </h2>
-        <p className="leading-7 [&:not(:first-child)]:mt-6">
-          Stay prepared with practice exams that simulate real test conditions.
-          Keep track of all your assignments and exam dates with the built-in
-          calendar, making sure you're always on top of your schedule.
-        </p>
+        <form
+              className="flex flex-col flex-1 gap-2"
+              onSubmit={handleSubmitFlash}
+            >
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="setName" className="text-lg">Exam or Set Name</Label>
+                <Input
+                  type="text"
+                  id="setName"
+                  name="setName"
+                  placeholder="e.g. AP Lang"
+                  value={setName}
+                  onChange={(e) => setSetName(e.target.value)}
+                  required
+                />
+                <Label htmlFor="notes" className="text-lg">Notes</Label>
+                <textarea
+                  id="notes"
+                  name="notes"
+                  className="w-full p-2 border rounded"
+                  placeholder="Enter any topics or notes you would like to study."
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  rows={4}
+                  required
+                />
+                {/* <Label htmlFor="file" className="text-lg">Upload PDF</Label>
+                  <Input
+                    type="file"
+                    id="file"
+                    name="file"
+                    accept="application/pdf"
+                    onChange={handleFileChange}
+                  /> */}
+                <Label htmlFor="setName" className="text-lg">Number of Flashcards or Questions</Label>
+                <Input
+                  type="text"
+                  id="setNumber"
+                  name="setNumber"
+                  placeholder="e.g. Choose from 1-30"
+                  value={number}
+                  onChange={(e) => setNumber(e.target.value)}
+                  required
+                />
+                
+                <div className="flex flex-row gap-2">
+                <button
+                    type="submit"
+                    className="px-4 py-2 font-bold text-white bg-green-700 rounded hover:bg-green-500 cursor-pointer"
+                  >
+                    Generate Flashcards
+                  </button>
+                  <button
+                    // type="submit"
+                    className="px-4 py-2 font-bold text-white bg-green-700 rounded hover:bg-green-500 cursor-pointer"
+                  >
+                    Generate Exam (still in works)
+                  </button>
+                </div>
+                  
+                <p className="text-sm text-muted-foreground">
+                    Please note that while our AI strives for accuracy, it may
+                    occasionally produce incorrect information, so always verify
+                    critical details.
+                  </p>
+              </div>
+            </form>
 
         <div className="flex py-5">
           <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>

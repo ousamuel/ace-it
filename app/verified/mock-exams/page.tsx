@@ -250,12 +250,6 @@ export default function MockExam() {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      <Tabs defaultValue="new-exam" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 my-8">
-          <TabsTrigger value="new-exam">Add New Exam</TabsTrigger>
-          <TabsTrigger value="saved-exams">Saved Exams</TabsTrigger>
-        </TabsList>
-        <TabsContent value="saved-exams">
           <h1 className="text-xl font-extrabold tracking-tight lg:text-3xl">
             My Saved Exams
           </h1>
@@ -491,118 +485,15 @@ export default function MockExam() {
                 </p>
               )}
             </Accordion>
-          </div>
-        </TabsContent>
-        <TabsContent value="new-exam">
-          <section className="flex flex-col gap-2 md:gap-6 text-center">
-            <div className="flex flex-col gap-1">
-              <h1 className="text-2xl font-extrabold tracking-tight lg:text-3xl">
-                Mock Exams
-              </h1>
-              <h3 className="sm:text-base font-semibold tracking-tight text-muted-foreground">
-                Create custom practice exams to test your knowledge!
-              </h3>
-            </div>
-            <Separator />
-
-            <div className="flex flex-col-reverse md:flex-row gap-2 gap-x-6 px-4">
-              <article className="flex flex-col flex-1">
-                <h2 className="scroll-m-20 border-b pb-2 text-xl font-semibold tracking-tight first:mt-0">
-                  How to Use the Mock Exam Generator
-                </h2>
-                <div className="px-2 list-decimal text-left">
-                  {instructionList.map((group, groupIndex) => (
-                    <Accordion
-                      key={groupIndex}
-                      type="multiple"
-                      className="w-full"
+            <a href="/verified/home">
+                <button
+                      // type="submit"
+                      className="px-4 py-2 font-bold text-white bg-green-700 rounded hover:bg-green-500 cursor-pointer"
                     >
-                      {group.items.map((item: any, itemIndex: number) => (
-                        <AccordionItem key={itemIndex} value={`${itemIndex}`}>
-                          <AccordionTrigger>
-                            <h4 className="scroll-m-20 text-md font-semibold tracking-tight">
-                              {item.heading}
-                            </h4>
-                          </AccordionTrigger>
-                          <AccordionContent>
-                            <ul className="md:text-base list-disc pl-4 flex flex-col space-y-2">
-                              {item.subList.map(
-                                (subItem: string, subItemIndex: number) => (
-                                  <li key={subItemIndex}>{subItem}</li>
-                                )
-                              )}
-                            </ul>
-                          </AccordionContent>
-                        </AccordionItem>
-                      ))}
-                    </Accordion>
-                  ))}
-                </div>
-              </article>{" "}
-              <Separator className="flex md:hidden " />
-              <form
-                className="flex flex-col flex-1 gap-2 rounded-lg"
-                onSubmit={(e) => handleSubmit(e)}
-              >
-                <div className="flex flex-col gap-2">
-                  <Label htmlFor="examName" className="text-lg">
-                    Topic of the exam
-                  </Label>
-                  <Input
-                    type="text"
-                    id="examName"
-                    name="examName"
-                    placeholder="e.g. Organic Chemistry"
-                    value={examName}
-                    onChange={(e) => setExamName(e.target.value)}
-                    required
-                  />
-                  <Label htmlFor="notes" className="text-lg">
-                    Notes
-                  </Label>
-                  <textarea
-                    id="notes"
-                    name="notes"
-                    className="w-full p-2 border rounded"
-                    placeholder="Enter topics or notes you would like to study, and specify the number of questions. Please be specific and extensive when describing what you're looking for."
-                    value={notes}
-                    onChange={(e) => setNotes(e.target.value)}
-                    rows={4}
-                    required
-                  />
-                  <Label htmlFor="questionCount" className="text-lg">
-                    Number of Questions
-                  </Label>
-                  <Input
-                    type="number"
-                    id="questionCount"
-                    name="questionCount"
-                    placeholder="e.g. Choose from 1-10"
-                    max={10}
-                    value={questionCount}
-                    onChange={(e) => setQuestionCount(e.target.value)}
-                    required
-                  />
-                  <Button
-                    type="submit"
-                    className="px-4 py-2 font-bold text-white bg-green-700 rounded hover:bg-green-500 cursor-pointer"
-                    disabled={isGenerateDisabled}
-                  >
-                    Generate Exam
-                  </Button>
-                  <p className="text-sm text-muted-foreground">
-                    Please note that while our AI strives for accuracy, it may
-                    occasionally produce incorrect information, so always verify
-                    critical details.
-                  </p>
-
-                  {/* <FormMessage message={searchParams} /> */}
-                </div>
-              </form>
-            </div>
-          </section>
-        </TabsContent>
-      </Tabs>
+                        Generate More!
+                </button>
+              </a>
+          </div>
     </ContentLayout>
   );
 }

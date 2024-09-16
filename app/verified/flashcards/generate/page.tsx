@@ -212,120 +212,6 @@ export default function GenerateFlashcards() {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      <Tabs defaultValue="new-flashcards" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 my-8">
-          <TabsTrigger value="new-flashcards">Add New Flashcards</TabsTrigger>
-          <TabsTrigger value="saved-flashcards">Saved Flashcards</TabsTrigger>
-        </TabsList>
-        <TabsContent value="new-flashcards">
-        <section className="flex flex-col gap-2 md:gap-6 text-center">          
-            <div className="flex flex-col gap-1">
-              <h1 className="text-2xl font-extrabold tracking-tight lg:text-3xl">
-                Flashcards
-              </h1>
-              <h3 className="sm:text-base font-semibold tracking-tight text-muted-foreground">
-                Create custom flashcards to enhance your studying!
-              </h3>
-            </div>
-            <Separator />
-              
-            <div className="flex flex-col-reverse md:flex-row gap-2 gap-x-6 px-4">
-              <article className="flex flex-col flex-1">
-                <h2 className="scroll-m-20 border-b pb-2 text-xl font-semibold tracking-tight first:mt-0">
-                  How to Use the Flashcard Generator
-                </h2>
-                <div className="px-2 list-decimal text-left">
-                  {instructionList.map((group, groupIndex) => (
-                    <Accordion
-                      key={groupIndex}
-                      type="multiple"
-                      className="w-full"
-                    >
-                      {group.items.map((item: any, itemIndex: number) => (
-                        <AccordionItem key={itemIndex} value={`${itemIndex}`}>
-                          <AccordionTrigger>
-                            <h4 className="scroll-m-20 text-md font-semibold tracking-tight">
-                              {item.heading}
-                            </h4>
-                          </AccordionTrigger>
-                          <AccordionContent>
-                            <ul className="md:text-base list-disc pl-4 flex flex-col space-y-2">
-                              {item.subList.map(
-                                (subItem: string, subItemIndex: number) => (
-                                  <li key={subItemIndex}>{subItem}</li>
-                                )
-                              )}
-                            </ul>
-                          </AccordionContent>
-                        </AccordionItem>
-                      ))}
-                    </Accordion>
-                  ))}
-                </div>
-              </article>{" "}
-              <Separator className="flex md:hidden " />
-            <form
-              className="flex flex-col flex-1 gap-2"
-              onSubmit={handleSubmit}
-            >
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="setName" className="text-lg">Flashcard Set Name</Label>
-                <Input
-                  type="text"
-                  id="setName"
-                  name="setName"
-                  placeholder="e.g. AP Lang"
-                  value={setName}
-                  onChange={(e) => setSetName(e.target.value)}
-                  required
-                />
-                <Label htmlFor="notes" className="text-lg">Notes</Label>
-                <textarea
-                  id="notes"
-                  name="notes"
-                  className="w-full p-2 border rounded"
-                  placeholder="Enter any topics or notes you would like to study."
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  rows={4}
-                  required
-                />
-                {/* <Label htmlFor="file" className="text-lg">Upload PDF</Label>
-                  <Input
-                    type="file"
-                    id="file"
-                    name="file"
-                    accept="application/pdf"
-                    onChange={handleFileChange}
-                  /> */}
-                <Label htmlFor="setName" className="text-lg">Number of Flashcards</Label>
-                <Input
-                  type="text"
-                  id="setNumber"
-                  name="setNumber"
-                  placeholder="e.g. Choose from 1-30"
-                  value={number}
-                  onChange={(e) => setNumber(e.target.value)}
-                  required
-                />
-                
-                <button
-                  type="submit"
-                  className="px-4 py-2 font-bold text-white bg-green-700 rounded hover:bg-green-500 cursor-pointer"
-                >
-                  Generate Flashcards
-                </button>
-                <p className="text-sm text-muted-foreground">
-                    Please note that while our AI strives for accuracy, it may
-                    occasionally produce incorrect information, so always verify
-                    critical details.
-                  </p>
-              </div>
-            </form>
-          </div>
-          </section>
-      </TabsContent>
-      <TabsContent value="saved-flashcards">
         <section>
         <h1 className="text-xl font-extrabold tracking-tight lg:text-3xl">
             My Saved Flashcards
@@ -404,11 +290,17 @@ export default function GenerateFlashcards() {
                   No Sets saved yet.
                 </p>
               )}
+              
+              <a href="/verified/home">
+                <button
+                      // type="submit"
+                      className="px-4 py-2 font-bold text-white bg-green-700 rounded hover:bg-green-500 cursor-pointer"
+                    >
+                        Generate More!
+                </button>
+              </a>
             </Accordion>
         </section>
-
-      </TabsContent>
-      </Tabs>
     </ContentLayout>
   );
 }
