@@ -6,9 +6,6 @@ import { createClient } from "@/utils/supabase/server";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
-
-
-
 export const addFlashcards = async (formData: FormData) => {
   const supabase = createClient();
   const question = formData.get("question")?.toString();
@@ -97,7 +94,6 @@ export const addFlashcards = async (formData: FormData) => {
     }
   }
 };
-
 export const addExam = async (formData: FormData) => {
   const supabase = createClient();
   const notes = formData.get("notes")?.toString();
@@ -169,7 +165,6 @@ export const addExam = async (formData: FormData) => {
     }
   }
 };
-
 export const submitUserTicketAction = async (formData: FormData) => {
   const subject = formData.get("subject")?.toString();
   const description = formData.get("description")?.toString();
